@@ -229,15 +229,6 @@
   transform: scale(1.2) rotate(5deg);
 }
 
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
 .feature-card h3 {
   font-size: 1.25rem;
   font-weight: 600;
