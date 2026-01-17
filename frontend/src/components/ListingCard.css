@@ -76,7 +76,7 @@
   font-size: 0.875rem;
   font-weight: 600;
   box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
-  animation: slideInRight 0.6s ease-out 0.2s both;
+  animation: slideInRightShort 0.6s ease-out 0.2s both;
   transition: all 0.3s ease;
 }
 
@@ -85,7 +85,7 @@
   box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
 }
 
-@keyframes slideInRight {
+@keyframes slideInRightShort {
   from {
     opacity: 0;
     transform: translateX(20px);

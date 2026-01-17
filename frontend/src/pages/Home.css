@@ -60,11 +60,11 @@
   text-align: center;
   margin-bottom: 2rem;
   opacity: 0.9;
-  animation: fadeIn 1s ease-out 0.3s both;
+  animation: fadeInSubtle 1s ease-out 0.3s both;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-@keyframes fadeIn {
+@keyframes fadeInSubtle {
   from {
     opacity: 0;
     transform: translateY(20px);
@@ -152,12 +152,6 @@
   border-top: 3px solid #2563eb;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 .no-listings {

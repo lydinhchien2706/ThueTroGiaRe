@@ -2,10 +2,10 @@
   padding: 2rem 0;
   min-height: 100vh;
   background: linear-gradient(135deg, #f9fafb 0%, #e5e7eb 100%);
-  animation: fadeIn 0.5s ease-in;
+  animation: fadeInPage 0.5s ease-in;
 }
 
-@keyframes fadeIn {
+@keyframes fadeInPage {
   from {
     opacity: 0;
   }
@@ -102,12 +102,6 @@
   animation: spin 1s linear infinite;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 .no-listings {
   text-align: center;
   padding: 3rem;
@@ -134,15 +128,6 @@
 
 .pagination .btn:hover:not(:disabled) {
   transform: scale(1.1);
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }
 
 .page-info {
