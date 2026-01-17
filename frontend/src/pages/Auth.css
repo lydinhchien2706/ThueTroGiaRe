@@ -1,34 +1,85 @@
+/* Mobile-first Auth Page Styles */
 .auth-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 2rem 0;
+  padding: 1rem;
+}
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  .auth-page {
+    padding: 1.5rem;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .auth-page {
+    padding: 2rem 0;
+  }
 }
 
 .auth-container {
   background-color: #fff;
   border-radius: 0.5rem;
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-  padding: 2rem;
+  padding: 1.5rem;
   max-width: 450px;
   width: 100%;
-  margin: 0 1rem;
+}
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  .auth-container {
+    padding: 2rem;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .auth-container {
+    padding: 2.5rem;
+  }
 }
 
 .auth-title {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
   text-align: center;
   color: #111827;
   margin-bottom: 0.5rem;
 }
 
+/* Tablet and up */
+@media (min-width: 640px) {
+  .auth-title {
+    font-size: 1.75rem;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .auth-title {
+    font-size: 2rem;
+  }
+}
+
 .auth-subtitle {
   text-align: center;
   color: #6b7280;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  .auth-subtitle {
+    margin-bottom: 2rem;
+    font-size: 1rem;
+  }
 }
 
 .auth-form {
@@ -37,21 +88,41 @@
   gap: 1rem;
 }
 
-.form-group {
+.auth-form .form-group {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.form-group label {
+.auth-form .form-group label {
   font-weight: 500;
   color: #374151;
+  font-size: 0.9rem;
 }
 
-.alert {
+/* Tablet and up */
+@media (min-width: 640px) {
+  .auth-form .form-group label {
+    font-size: 1rem;
+  }
+}
+
+.auth-form .form-control {
+  min-height: var(--min-touch-target);
+}
+
+.auth-form .alert {
   padding: 0.75rem 1rem;
   border-radius: 0.375rem;
   margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  .auth-form .alert {
+    font-size: 1rem;
+  }
 }
 
 .alert-error {
@@ -63,12 +134,21 @@
 .btn-block {
   width: 100%;
   margin-top: 0.5rem;
+  min-height: var(--min-touch-target);
 }
 
 .auth-footer {
   text-align: center;
   margin-top: 1.5rem;
   color: #6b7280;
+  font-size: 0.9rem;
+}
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  .auth-footer {
+    font-size: 1rem;
+  }
 }
 
 .auth-footer a {

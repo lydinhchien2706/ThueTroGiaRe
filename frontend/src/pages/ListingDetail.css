@@ -1,7 +1,22 @@
+/* Mobile-first ListingDetail Page Styles */
 .listing-detail-page {
-  padding: 2rem 0;
+  padding: 1rem 0;
   background-color: #f9fafb;
   min-height: 100vh;
+}
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  .listing-detail-page {
+    padding: 1.5rem 0;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .listing-detail-page {
+    padding: 2rem 0;
+  }
 }
 
 .listing-detail {
@@ -13,104 +28,295 @@
 
 .listing-images {
   width: 100%;
-  max-height: 500px;
+  max-height: 300px;
   overflow: hidden;
 }
 
+/* Tablet and up */
+@media (min-width: 640px) {
+  .listing-images {
+    max-height: 400px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .listing-images {
+    max-height: 500px;
+  }
+}
+
+/* Mobile: Single column */
 .images-gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 0.5rem;
+  grid-template-columns: 1fr;
+  gap: 0.25rem;
+}
+
+/* Tablet: 2 columns */
+@media (min-width: 640px) {
+  .images-gallery {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+}
+
+/* Desktop: Auto-fit with minimum width */
+@media (min-width: 1024px) {
+  .images-gallery {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
 }
 
 .images-gallery img {
   width: 100%;
-  height: 300px;
+  height: 200px;
   object-fit: cover;
 }
 
+/* Tablet and up */
+@media (min-width: 640px) {
+  .images-gallery img {
+    height: 250px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .images-gallery img {
+    height: 300px;
+  }
+}
+
 .listing-info {
-  padding: 2rem;
+  padding: 1rem;
+}
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  .listing-info {
+    padding: 1.5rem;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .listing-info {
+    padding: 2rem;
+  }
 }
 
 .listing-type-badge {
   display: inline-block;
   background-color: #2563eb;
   color: #fff;
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 0.875rem;
   border-radius: 0.25rem;
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
-.listing-title {
-  font-size: 2rem;
+/* Tablet and up */
+@media (min-width: 640px) {
+  .listing-type-badge {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
+}
+
+.listing-detail .listing-title {
+  font-size: 1.5rem;
   font-weight: 700;
   color: #111827;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
 }
 
-.listing-price {
+/* Tablet and up */
+@media (min-width: 640px) {
+  .listing-detail .listing-title {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .listing-detail .listing-title {
+    font-size: 2rem;
+  }
+}
+
+.listing-detail .listing-price {
   color: #dc2626;
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  .listing-detail .listing-price {
+    font-size: 1.75rem;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .listing-detail .listing-price {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
 }
 
 .listing-specs {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  padding: 1.5rem;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
   background-color: #f3f4f6;
   border-radius: 0.5rem;
 }
 
+/* Tablet and up */
+@media (min-width: 640px) {
+  .listing-specs {
+    gap: 1rem;
+    padding: 1.25rem;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .listing-specs {
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+}
+
 .spec-item {
   display: flex;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  .spec-item {
+    flex-direction: row;
+    gap: 1rem;
+  }
 }
 
 .spec-label {
   font-weight: 600;
   color: #4b5563;
-  min-width: 100px;
+  font-size: 0.9rem;
+}
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  .spec-label {
+    min-width: 100px;
+    font-size: 1rem;
+  }
 }
 
 .spec-value {
   color: #111827;
+  font-size: 0.9rem;
+}
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  .spec-value {
+    font-size: 1rem;
+  }
 }
 
 .listing-description {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .listing-description {
+    margin-bottom: 2rem;
+  }
 }
 
 .listing-description h2 {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 600;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   color: #111827;
+}
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  .listing-description h2 {
+    font-size: 1.375rem;
+    margin-bottom: 1rem;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .listing-description h2 {
+    font-size: 1.5rem;
+  }
 }
 
 .listing-description p {
   color: #4b5563;
   line-height: 1.6;
   white-space: pre-wrap;
+  font-size: 0.95rem;
+}
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  .listing-description p {
+    font-size: 1rem;
+  }
 }
 
 .listing-contact-card {
-  padding: 1.5rem;
+  padding: 1rem;
   background-color: #f3f4f6;
   border-radius: 0.5rem;
 }
 
+/* Tablet and up */
+@media (min-width: 640px) {
+  .listing-contact-card {
+    padding: 1.25rem;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .listing-contact-card {
+    padding: 1.5rem;
+  }
+}
+
 .listing-contact-card h2 {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-weight: 600;
-  margin-bottom: 1rem;
+  margin-bottom: 0.875rem;
   color: #111827;
+}
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  .listing-contact-card h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
 }
 
 .contact-info {
@@ -121,48 +327,66 @@
 
 .contact-item {
   display: flex;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  .contact-item {
+    flex-direction: row;
+    gap: 1rem;
+  }
 }
 
 .contact-label {
   font-weight: 600;
   color: #4b5563;
-  min-width: 120px;
+  font-size: 0.9rem;
+}
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  .contact-label {
+    min-width: 120px;
+    font-size: 1rem;
+  }
+}
+
+.contact-value {
+  font-size: 0.9rem;
+}
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  .contact-value {
+    font-size: 1rem;
+  }
 }
 
 .contact-value a {
   color: #2563eb;
   text-decoration: none;
+  word-break: break-all;
 }
 
 .contact-value a:hover {
   text-decoration: underline;
 }
 
-.loading,
-.error {
+.listing-detail-page .loading,
+.listing-detail-page .error {
   text-align: center;
-  padding: 3rem;
-  font-size: 1.125rem;
+  padding: 2rem 1rem;
+  font-size: 1rem;
   color: #6b7280;
 }
 
-@media (max-width: 768px) {
-  .listing-title {
-    font-size: 1.5rem;
-  }
-
-  .listing-price {
-    font-size: 1.5rem;
-  }
-
-  .spec-item,
-  .contact-item {
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-
-  .images-gallery {
-    grid-template-columns: 1fr;
+/* Desktop */
+@media (min-width: 1024px) {
+  .listing-detail-page .loading,
+  .listing-detail-page .error {
+    padding: 3rem;
+    font-size: 1.125rem;
   }
 }
