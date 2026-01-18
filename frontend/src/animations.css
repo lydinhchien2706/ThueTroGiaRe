@@ -1460,7 +1460,7 @@ main {
   right: 0;
   bottom: 0;
   background: var(--color-white);
-  border-radius: calc(inherit - 2px);
+  border-radius: var(--radius-lg);
   z-index: -1;
   transition: opacity var(--duration-base) var(--ease-out);
 }
