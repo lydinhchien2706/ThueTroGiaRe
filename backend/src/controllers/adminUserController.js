@@ -3,6 +3,23 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const AdminLog = require('../models/AdminLog');
 
+// Helper function to check if admin can modify target user
+const canModifyUser = (adminRole, targetRole) => {
+  // SUPER_ADMIN can modify anyone
+  if (adminRole === User.ROLES.SUPER_ADMIN) return true;
+  // ADMIN cannot modify SUPER_ADMIN or other ADMIN
+  if (targetRole === User.ROLES.SUPER_ADMIN) return false;
+  if (targetRole === User.ROLES.ADMIN && adminRole === User.ROLES.ADMIN) return false;
+  return true;
+};
+
+// Helper function to check if admin can assign a specific role
+const canAssignRole = (adminRole, targetRole) => {
+  // Only SUPER_ADMIN can assign SUPER_ADMIN role
+  if (targetRole === User.ROLES.SUPER_ADMIN && adminRole !== User.ROLES.SUPER_ADMIN) return false;
+  return true;
+};
+
 // Get all users with filters
 exports.getUsers = async (req, res) => {
   try {
@@ -122,19 +139,19 @@ exports.updateUserRole = async (req, res) => {
       });
     }
 
-    // Prevent ADMIN from modifying SUPER_ADMIN
-    if (user.role === User.ROLES.SUPER_ADMIN && adminRole !== User.ROLES.SUPER_ADMIN) {
+    // Check if admin can modify this user
+    if (!canModifyUser(adminRole, user.role)) {
       return res.status(403).json({ 
         success: false, 
-        message: 'Bạn không có quyền thay đổi role của Super Admin' 
+        message: 'Bạn không có quyền thay đổi role của người dùng này' 
       });
     }
 
-    // Only SUPER_ADMIN can set SUPER_ADMIN role
-    if (role === User.ROLES.SUPER_ADMIN && adminRole !== User.ROLES.SUPER_ADMIN) {
+    // Check if admin can assign this role
+    if (!canAssignRole(adminRole, role)) {
       return res.status(403).json({ 
         success: false, 
-        message: 'Chỉ Super Admin mới có quyền gán role Super Admin' 
+        message: 'Bạn không có quyền gán role này' 
       });
     }
 
@@ -190,19 +207,11 @@ exports.toggleUserLock = async (req, res) => {
       });
     }
 
-    // Prevent locking SUPER_ADMIN
-    if (user.role === User.ROLES.SUPER_ADMIN) {
+    // Check if admin can modify this user
+    if (!canModifyUser(adminRole, user.role)) {
       return res.status(403).json({ 
         success: false, 
-        message: 'Không thể khóa tài khoản Super Admin' 
-      });
-    }
-
-    // Prevent ADMIN from locking other ADMIN
-    if (user.role === User.ROLES.ADMIN && adminRole !== User.ROLES.SUPER_ADMIN) {
-      return res.status(403).json({ 
-        success: false, 
-        message: 'Chỉ Super Admin mới có quyền khóa tài khoản Admin' 
+        message: 'Bạn không có quyền thay đổi trạng thái tài khoản này' 
       });
     }
 
@@ -264,11 +273,11 @@ exports.resetUserPassword = async (req, res) => {
       });
     }
 
-    // Prevent resetting SUPER_ADMIN password by non-SUPER_ADMIN
-    if (user.role === User.ROLES.SUPER_ADMIN && adminRole !== User.ROLES.SUPER_ADMIN) {
+    // Check if admin can modify this user
+    if (!canModifyUser(adminRole, user.role)) {
       return res.status(403).json({ 
         success: false, 
-        message: 'Bạn không có quyền đặt lại mật khẩu Super Admin' 
+        message: 'Bạn không có quyền đặt lại mật khẩu của người dùng này' 
       });
     }
 

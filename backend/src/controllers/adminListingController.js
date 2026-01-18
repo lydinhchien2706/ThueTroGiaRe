@@ -1,4 +1,5 @@
 const { Op } = require('sequelize');
+const sequelize = require('../config/database');
 const Listing = require('../models/Listing');
 const ListingImage = require('../models/ListingImage');
 const Location = require('../models/Location');
@@ -155,14 +156,16 @@ exports.getPendingListings = async (req, res) => {
 
 // Approve listing
 exports.approveListing = async (req, res) => {
+  const transaction = await sequelize.transaction();
   try {
     const { id } = req.params;
     const { admin_note } = req.body;
     const adminId = req.user.id;
 
-    const listing = await Listing.findByPk(id);
+    const listing = await Listing.findByPk(id, { transaction });
 
     if (!listing) {
+      await transaction.rollback();
       return res.status(404).json({ 
         success: false, 
         message: 'Không tìm thấy tin đăng' 
@@ -175,17 +178,19 @@ exports.approveListing = async (req, res) => {
       reviewed_by: adminId,
       reviewed_at: new Date(),
       updated_at: new Date()
-    });
+    }, { transaction });
 
     // Log admin action
-    await AdminLog.logAction(
-      adminId,
-      'APPROVE_LISTING',
-      'listing',
-      listing.id,
-      { admin_note },
-      req.ip
-    );
+    await AdminLog.create({
+      admin_id: adminId,
+      action: 'APPROVE_LISTING',
+      target_type: 'listing',
+      target_id: listing.id,
+      details: { admin_note },
+      ip_address: req.ip
+    }, { transaction });
+
+    await transaction.commit();
 
     res.json({
       success: true,
@@ -193,6 +198,7 @@ exports.approveListing = async (req, res) => {
       data: { listing }
     });
   } catch (error) {
+    await transaction.rollback();
     console.error('Approve listing error:', error);
     res.status(500).json({ 
       success: false, 
@@ -204,21 +210,24 @@ exports.approveListing = async (req, res) => {
 
 // Reject listing
 exports.rejectListing = async (req, res) => {
+  const transaction = await sequelize.transaction();
   try {
     const { id } = req.params;
     const { admin_note } = req.body;
     const adminId = req.user.id;
 
     if (!admin_note) {
+      await transaction.rollback();
       return res.status(400).json({ 
         success: false, 
         message: 'Vui lòng cung cấp lý do từ chối' 
       });
     }
 
-    const listing = await Listing.findByPk(id);
+    const listing = await Listing.findByPk(id, { transaction });
 
     if (!listing) {
+      await transaction.rollback();
       return res.status(404).json({ 
         success: false, 
         message: 'Không tìm thấy tin đăng' 
@@ -231,17 +240,19 @@ exports.rejectListing = async (req, res) => {
       reviewed_by: adminId,
       reviewed_at: new Date(),
       updated_at: new Date()
-    });
+    }, { transaction });
 
     // Log admin action
-    await AdminLog.logAction(
-      adminId,
-      'REJECT_LISTING',
-      'listing',
-      listing.id,
-      { admin_note },
-      req.ip
-    );
+    await AdminLog.create({
+      admin_id: adminId,
+      action: 'REJECT_LISTING',
+      target_type: 'listing',
+      target_id: listing.id,
+      details: { admin_note },
+      ip_address: req.ip
+    }, { transaction });
+
+    await transaction.commit();
 
     res.json({
       success: true,
@@ -249,6 +260,7 @@ exports.rejectListing = async (req, res) => {
       data: { listing }
     });
   } catch (error) {
+    await transaction.rollback();
     console.error('Reject listing error:', error);
     res.status(500).json({ 
       success: false, 

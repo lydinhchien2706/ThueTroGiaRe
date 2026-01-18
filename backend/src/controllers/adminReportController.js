@@ -1,4 +1,5 @@
 const { Op } = require('sequelize');
+const sequelize = require('../config/database');
 const Report = require('../models/Report');
 const User = require('../models/User');
 const Listing = require('../models/Listing');
@@ -223,14 +224,16 @@ exports.updateReportStatus = async (req, res) => {
 
 // Handle report with action
 exports.handleReport = async (req, res) => {
+  const transaction = await sequelize.transaction();
   try {
     const { id } = req.params;
     const { action, admin_note } = req.body;
     const adminId = req.user.id;
 
-    const report = await Report.findByPk(id);
+    const report = await Report.findByPk(id, { transaction });
 
     if (!report) {
+      await transaction.rollback();
       return res.status(404).json({ 
         success: false, 
         message: 'Không tìm thấy báo cáo' 
@@ -241,34 +244,34 @@ exports.handleReport = async (req, res) => {
 
     // Execute action based on report type
     if (action === 'hide_content' && report.target_type === 'listing') {
-      const listing = await Listing.findByPk(report.target_id);
+      const listing = await Listing.findByPk(report.target_id, { transaction });
       if (listing) {
-        await listing.update({ status: 'inactive' });
+        await listing.update({ status: 'inactive' }, { transaction });
         actionResult = 'Đã ẩn tin đăng';
         
-        await AdminLog.logAction(
-          adminId,
-          'HIDE_LISTING_FROM_REPORT',
-          'listing',
-          listing.id,
-          { report_id: report.id },
-          req.ip
-        );
+        await AdminLog.create({
+          admin_id: adminId,
+          action: 'HIDE_LISTING_FROM_REPORT',
+          target_type: 'listing',
+          target_id: listing.id,
+          details: { report_id: report.id },
+          ip_address: req.ip
+        }, { transaction });
       }
     } else if (action === 'lock_user' && report.target_type === 'user') {
-      const user = await User.findByPk(report.target_id);
+      const user = await User.findByPk(report.target_id, { transaction });
       if (user && user.role !== User.ROLES.SUPER_ADMIN) {
-        await user.update({ is_locked: true });
+        await user.update({ is_locked: true }, { transaction });
         actionResult = 'Đã khóa tài khoản';
         
-        await AdminLog.logAction(
-          adminId,
-          'LOCK_USER_FROM_REPORT',
-          'user',
-          user.id,
-          { report_id: report.id },
-          req.ip
-        );
+        await AdminLog.create({
+          admin_id: adminId,
+          action: 'LOCK_USER_FROM_REPORT',
+          target_type: 'user',
+          target_id: user.id,
+          details: { report_id: report.id },
+          ip_address: req.ip
+        }, { transaction });
       }
     } else if (action === 'dismiss') {
       actionResult = 'Đã bỏ qua báo cáo';
@@ -280,17 +283,19 @@ exports.handleReport = async (req, res) => {
       admin_note,
       handled_by: adminId,
       handled_at: new Date()
-    });
+    }, { transaction });
 
     // Log admin action
-    await AdminLog.logAction(
-      adminId,
-      'HANDLE_REPORT',
-      'report',
-      report.id,
-      { action, admin_note, actionResult },
-      req.ip
-    );
+    await AdminLog.create({
+      admin_id: adminId,
+      action: 'HANDLE_REPORT',
+      target_type: 'report',
+      target_id: report.id,
+      details: { action, admin_note, actionResult },
+      ip_address: req.ip
+    }, { transaction });
+
+    await transaction.commit();
 
     res.json({
       success: true,
@@ -298,6 +303,7 @@ exports.handleReport = async (req, res) => {
       data: { report }
     });
   } catch (error) {
+    await transaction.rollback();
     console.error('Handle report error:', error);
     res.status(500).json({ 
       success: false, 
