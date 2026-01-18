@@ -1,12 +1,17 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { listingsAPI } from '../services/api';
+import { listingsAPI, mediaAPI } from '../services/api';
+import { HeroMediaSection, MediaGallery, VideoReviewFeed } from '../components/media';
 import './ListingDetail.css';
 
 const ListingDetail = () => {
   const { id } = useParams();
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [mediaData, setMediaData] = useState(null);
+  const [videoReviews, setVideoReviews] = useState([]);
+  // showGallery state can be used for modal gallery in future enhancement
+  const [, setShowGallery] = useState(false);
 
   const fetchListing = useCallback(async () => {
     try {
@@ -19,9 +24,53 @@ const ListingDetail = () => {
     }
   }, [id]);
 
+  const fetchMedia = useCallback(async () => {
+    try {
+      const response = await mediaAPI.getListingMedia(id);
+      setMediaData(response.data.data);
+    } catch (error) {
+      console.error('Error fetching media:', error);
+    }
+  }, [id]);
+
+  const fetchVideoReviews = useCallback(async () => {
+    try {
+      const response = await mediaAPI.getVideoReviews(id);
+      const reviews = response.data.data.reviews || [];
+      const videoMedia = response.data.data.videoReviewMedia || [];
+      setVideoReviews([...reviews, ...videoMedia]);
+    } catch (error) {
+      console.error('Error fetching video reviews:', error);
+    }
+  }, [id]);
+
+  const handleMediaLike = async (mediaId) => {
+    try {
+      await mediaAPI.toggleLike(mediaId);
+    } catch (error) {
+      console.error('Error toggling like:', error);
+      throw error;
+    }
+  };
+
+  const handleMediaReport = async (mediaId) => {
+    const reason = window.prompt('Lý do báo cáo:');
+    if (reason) {
+      try {
+        await mediaAPI.reportMedia(mediaId, { reason });
+        alert('Báo cáo thành công');
+      } catch (error) {
+        console.error('Error reporting media:', error);
+        alert('Có lỗi xảy ra');
+      }
+    }
+  };
+
   useEffect(() => {
     fetchListing();
-  }, [fetchListing]);
+    fetchMedia();
+    fetchVideoReviews();
+  }, [fetchListing, fetchMedia, fetchVideoReviews]);
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('vi-VN', {
@@ -59,17 +108,21 @@ const ListingDetail = () => {
     <div className="listing-detail-page">
       <div className="container">
         <div className="listing-detail">
-          <div className="listing-images">
-            {listing.images && listing.images.length > 0 ? (
-              <div className="images-gallery">
-                {listing.images.map((image) => (
-                  <img key={image.id} src={image.image_url} alt={listing.title} />
-                ))}
-              </div>
-            ) : (
-              <img src="https://via.placeholder.com/800x600?text=No+Image" alt={listing.title} />
-            )}
-          </div>
+          {/* Hero Media Section */}
+          <HeroMediaSection
+            heroVideo={mediaData?.heroVideo}
+            images={listing?.images || []}
+            onPlayFullscreen={() => {}}
+            onOpenGallery={() => setShowGallery(true)}
+          />
+
+          {/* Media Gallery */}
+          {(listing?.images?.length > 0 || mediaData?.ownerMedia?.length > 0) && (
+            <MediaGallery
+              images={listing?.images || []}
+              videos={mediaData?.ownerVideos || []}
+            />
+          )}
 
           <div className="listing-info">
             <div className="listing-type-badge">{getTypeLabel(listing.type)}</div>
@@ -122,6 +175,15 @@ const ListingDetail = () => {
               </div>
             )}
           </div>
+
+          {/* Video Review Feed - TikTok Style */}
+          {videoReviews.length > 0 && (
+            <VideoReviewFeed
+              reviews={videoReviews}
+              onLike={handleMediaLike}
+              onReport={handleMediaReport}
+            />
+          )}
         </div>
       </div>
     </div>

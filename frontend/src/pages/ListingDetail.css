@@ -478,3 +478,71 @@
     font-size: 1.125rem;
   }
 }
+
+/* ========================================
+   MEDIA SECTION INTEGRATION STYLES
+   ======================================== */
+
+/* Import media component styles */
+@import '../components/media/HeroMediaSection.css';
+@import '../components/media/MediaGallery.css';
+@import '../components/media/VideoReviewFeed.css';
+@import '../components/media/MediaUploader.css';
+
+/* Media Section Spacing */
+.listing-detail .hero-media-section {
+  margin-bottom: 0;
+}
+
+.listing-detail .media-gallery {
+  padding: 1.5rem;
+  border-top: 1px solid var(--color-gray-100);
+}
+
+@media (min-width: 1024px) {
+  .listing-detail .media-gallery {
+    padding: 2rem;
+  }
+}
+
+.listing-detail .video-review-section {
+  padding: 1.5rem;
+  background: var(--color-gray-50);
+  border-top: 1px solid var(--color-gray-100);
+}
+
+@media (min-width: 1024px) {
+  .listing-detail .video-review-section {
+    padding: 2rem;
+  }
+}
+
+/* Trust Badges for Media */
+.media-trust-badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.trust-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-primary-dark);
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.trust-badge.video-real {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--color-secondary);
+}
+
+.trust-badge.user-review {
+  background: rgba(249, 115, 22, 0.1);
+  color: var(--color-accent);
+}

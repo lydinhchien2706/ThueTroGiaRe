@@ -54,6 +54,27 @@ export const filtersAPI = {
   getAudiences: () => api.get('/filters/audiences'),
 };
 
+// Media API
+export const mediaAPI = {
+  // Get media for a listing
+  getListingMedia: (listingId, params) => api.get(`/media/listings/${listingId}/media`, { params }),
+  getVideoReviews: (listingId, params) => api.get(`/media/listings/${listingId}/video-reviews`, { params }),
+  
+  // Upload media (owner)
+  uploadListingMedia: (listingId, data) => api.post(`/media/listings/${listingId}/media`, data),
+  uploadListingVideo: (listingId, data) => api.post(`/media/listings/${listingId}/video`, data),
+  updateMediaOrder: (listingId, data) => api.put(`/media/listings/${listingId}/media-order`, data),
+  setHeroVideo: (listingId, videoId) => api.put(`/media/listings/${listingId}/hero-video/${videoId}`),
+  
+  // Upload review media (user)
+  uploadReviewMedia: (listingId, data) => api.post(`/media/listings/${listingId}/review-media`, data),
+  
+  // Media interactions
+  toggleLike: (mediaId) => api.post(`/media/media/${mediaId}/like`),
+  reportMedia: (mediaId, data) => api.post(`/media/media/${mediaId}/report`, data),
+  deleteMedia: (mediaId) => api.delete(`/media/media/${mediaId}`),
+};
+
 // Admin API
 export const adminAPI = {
   // Dashboard
