@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { adminAPI } from '../../services/api';
 import AdminLayout from './AdminLayout';
 
@@ -12,11 +12,7 @@ const AdminReports = () => {
     target_type: ''
   });
 
-  useEffect(() => {
-    fetchReports();
-  }, [pagination.page, filters]);
-
-  const fetchReports = async () => {
+  const fetchReports = useCallback(async () => {
     setLoading(true);
     try {
       const params = {
@@ -39,7 +35,11 @@ const AdminReports = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [pagination.page, filters]);
+
+  useEffect(() => {
+    fetchReports();
+  }, [fetchReports]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;

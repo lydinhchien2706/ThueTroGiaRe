@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { adminAPI } from '../../services/api';
 import AdminLayout from './AdminLayout';
@@ -14,11 +14,7 @@ const AdminListings = () => {
     approval_status: ''
   });
 
-  useEffect(() => {
-    fetchListings();
-  }, [pagination.page, filters]);
-
-  const fetchListings = async () => {
+  const fetchListings = useCallback(async () => {
     setLoading(true);
     try {
       const params = {
@@ -41,7 +37,11 @@ const AdminListings = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [pagination.page, filters]);
+
+  useEffect(() => {
+    fetchListings();
+  }, [fetchListings]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;

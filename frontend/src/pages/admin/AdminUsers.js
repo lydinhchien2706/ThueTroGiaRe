@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { adminAPI } from '../../services/api';
 import { useAuth, ROLES } from '../../context/AuthContext';
 import AdminLayout from './AdminLayout';
@@ -14,11 +14,7 @@ const AdminUsers = () => {
     is_locked: ''
   });
 
-  useEffect(() => {
-    fetchUsers();
-  }, [pagination.page, filters]);
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
       const params = {
@@ -42,7 +38,11 @@ const AdminUsers = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [pagination.page, filters]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;

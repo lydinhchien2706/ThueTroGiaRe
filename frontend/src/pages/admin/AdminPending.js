@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { adminAPI } from '../../services/api';
 import AdminLayout from './AdminLayout';
@@ -8,11 +8,7 @@ const AdminPending = () => {
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
 
-  useEffect(() => {
-    fetchPendingListings();
-  }, [pagination.page]);
-
-  const fetchPendingListings = async () => {
+  const fetchPendingListings = useCallback(async () => {
     setLoading(true);
     try {
       const response = await adminAPI.getPendingListings({
@@ -29,7 +25,11 @@ const AdminPending = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [pagination.page]);
+
+  useEffect(() => {
+    fetchPendingListings();
+  }, [fetchPendingListings]);
 
   const handleApprove = async (id) => {
     const note = prompt('Ghi chú (tùy chọn):');
