@@ -146,7 +146,8 @@ exports.getAllReviews = async (req, res) => {
       limit = REVIEW_CONFIG.DEFAULT_PAGE_SIZE,
       type,
       minRating,
-      sort = 'newest'
+      sort = 'newest',
+      role
     } = req.query;
     const offset = (page - 1) * limit;
 
@@ -158,6 +159,10 @@ exports.getAllReviews = async (req, res) => {
 
     if (minRating) {
       where.rating = { [Op.gte]: parseInt(minRating) };
+    }
+
+    if (role && ['landlord', 'renter'].includes(role)) {
+      where.role = role;
     }
 
     // Determine sort order
