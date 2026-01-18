@@ -82,7 +82,7 @@ const uploadReviewMedia = (req, res, next) => {
             message = 'Quá nhiều trường trong form';
             break;
           default:
-            message = `Lỗi tải file: ${err.code}`;
+            message = 'Lỗi khi tải file lên';
         }
         
         return res.status(400).json({
