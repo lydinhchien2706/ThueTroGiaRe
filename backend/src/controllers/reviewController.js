@@ -51,6 +51,38 @@ const validateMediaItems = (mediaArray) => {
   return true;
 };
 
+// Shared error handler for review operations
+const handleReviewError = (res, error, operation) => {
+  // Handle specific database/validation errors
+  if (error.name === 'SequelizeValidationError') {
+    const validationMessages = error.errors.map(e => e.message).join(', ');
+    return res.status(400).json({
+      success: false,
+      message: `Dữ liệu không hợp lệ: ${validationMessages}`
+    });
+  }
+  
+  if (error.name === 'SequelizeForeignKeyConstraintError') {
+    return res.status(400).json({
+      success: false,
+      message: 'Phòng trọ hoặc người dùng không tồn tại'
+    });
+  }
+  
+  if (error.name === 'SequelizeConnectionError' || error.name === 'SequelizeConnectionRefusedError') {
+    return res.status(503).json({
+      success: false,
+      message: 'Không thể kết nối đến cơ sở dữ liệu. Vui lòng thử lại sau.'
+    });
+  }
+  
+  return res.status(500).json({
+    success: false,
+    message: `Lỗi server khi ${operation}. Vui lòng thử lại.`,
+    error: process.env.NODE_ENV === 'development' ? error.message : undefined
+  });
+};
+
 // Get reviews for a room/listing
 exports.getReviewsByRoom = async (req, res) => {
   try {
@@ -393,35 +425,7 @@ exports.createReview = async (req, res) => {
   } catch (error) {
     await transaction.rollback();
     console.error('Create review error:', error);
-    
-    // Handle specific database/validation errors
-    if (error.name === 'SequelizeValidationError') {
-      const validationMessages = error.errors.map(e => e.message).join(', ');
-      return res.status(400).json({
-        success: false,
-        message: `Dữ liệu không hợp lệ: ${validationMessages}`
-      });
-    }
-    
-    if (error.name === 'SequelizeForeignKeyConstraintError') {
-      return res.status(400).json({
-        success: false,
-        message: 'Phòng trọ hoặc người dùng không tồn tại'
-      });
-    }
-    
-    if (error.name === 'SequelizeConnectionError' || error.name === 'SequelizeConnectionRefusedError') {
-      return res.status(503).json({
-        success: false,
-        message: 'Không thể kết nối đến cơ sở dữ liệu. Vui lòng thử lại sau.'
-      });
-    }
-    
-    res.status(500).json({
-      success: false,
-      message: 'Lỗi server khi tạo review. Vui lòng thử lại.',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
+    return handleReviewError(res, error, 'tạo review');
   }
 };
 
@@ -546,35 +550,7 @@ exports.createReviewWithUpload = async (req, res) => {
     await transaction.rollback();
     cleanupUploadedFiles(files);
     console.error('Create review with upload error:', error);
-    
-    // Handle specific database/validation errors
-    if (error.name === 'SequelizeValidationError') {
-      const validationMessages = error.errors.map(e => e.message).join(', ');
-      return res.status(400).json({
-        success: false,
-        message: `Dữ liệu không hợp lệ: ${validationMessages}`
-      });
-    }
-    
-    if (error.name === 'SequelizeForeignKeyConstraintError') {
-      return res.status(400).json({
-        success: false,
-        message: 'Phòng trọ hoặc người dùng không tồn tại'
-      });
-    }
-    
-    if (error.name === 'SequelizeConnectionError' || error.name === 'SequelizeConnectionRefusedError') {
-      return res.status(503).json({
-        success: false,
-        message: 'Không thể kết nối đến cơ sở dữ liệu. Vui lòng thử lại sau.'
-      });
-    }
-    
-    res.status(500).json({
-      success: false,
-      message: 'Lỗi server khi tạo review. Vui lòng thử lại.',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
+    return handleReviewError(res, error, 'tạo review');
   }
 };
 
@@ -617,28 +593,7 @@ exports.updateReview = async (req, res) => {
     });
   } catch (error) {
     console.error('Update review error:', error);
-    
-    // Handle specific database/validation errors
-    if (error.name === 'SequelizeValidationError') {
-      const validationMessages = error.errors.map(e => e.message).join(', ');
-      return res.status(400).json({
-        success: false,
-        message: `Dữ liệu không hợp lệ: ${validationMessages}`
-      });
-    }
-    
-    if (error.name === 'SequelizeConnectionError' || error.name === 'SequelizeConnectionRefusedError') {
-      return res.status(503).json({
-        success: false,
-        message: 'Không thể kết nối đến cơ sở dữ liệu. Vui lòng thử lại sau.'
-      });
-    }
-    
-    res.status(500).json({
-      success: false,
-      message: 'Lỗi server khi cập nhật review. Vui lòng thử lại.',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
+    return handleReviewError(res, error, 'cập nhật review');
   }
 };
 
@@ -672,19 +627,7 @@ exports.deleteReview = async (req, res) => {
     });
   } catch (error) {
     console.error('Delete review error:', error);
-    
-    if (error.name === 'SequelizeConnectionError' || error.name === 'SequelizeConnectionRefusedError') {
-      return res.status(503).json({
-        success: false,
-        message: 'Không thể kết nối đến cơ sở dữ liệu. Vui lòng thử lại sau.'
-      });
-    }
-    
-    res.status(500).json({
-      success: false,
-      message: 'Lỗi server khi xóa review. Vui lòng thử lại.',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
+    return handleReviewError(res, error, 'xóa review');
   }
 };
 

@@ -104,7 +104,7 @@ const uploadReviewMedia = (req, res, next) => {
       return res.status(500).json({
         success: false,
         message: 'Lỗi khi tải file lên. Vui lòng thử lại.',
-        error: err.message
+        error: process.env.NODE_ENV === 'development' ? err.message : undefined
       });
     }
     
