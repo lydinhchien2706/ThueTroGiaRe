@@ -6,6 +6,31 @@
   overflow: hidden;
   box-shadow: var(--shadow-card);
   border: 1px solid var(--color-gray-100);
+  position: relative;
+}
+
+/* Premium shimmer overlay */
+.skeleton-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.5) 50%,
+    transparent 80%
+  );
+  transform: translateX(-100%);
+  animation: skeletonCardShimmer 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes skeletonCardShimmer {
+  0% { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(200%) skewX(-15deg); }
 }
 
 .skeleton-card-image {
@@ -109,26 +134,26 @@
   position: relative;
 }
 
-/* Staggered animation for skeleton grid */
+/* Staggered animation for skeleton grid - Premium entrance */
 .skeleton-grid .skeleton-card {
-  animation: skeleton-fade-in 0.3s ease-out forwards;
+  animation: skeletonCardEnter 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   opacity: 0;
 }
 
 .skeleton-grid .skeleton-card:nth-child(1) { animation-delay: 0ms; }
-.skeleton-grid .skeleton-card:nth-child(2) { animation-delay: 50ms; }
-.skeleton-grid .skeleton-card:nth-child(3) { animation-delay: 100ms; }
-.skeleton-grid .skeleton-card:nth-child(4) { animation-delay: 150ms; }
-.skeleton-grid .skeleton-card:nth-child(5) { animation-delay: 200ms; }
-.skeleton-grid .skeleton-card:nth-child(6) { animation-delay: 250ms; }
+.skeleton-grid .skeleton-card:nth-child(2) { animation-delay: 80ms; }
+.skeleton-grid .skeleton-card:nth-child(3) { animation-delay: 160ms; }
+.skeleton-grid .skeleton-card:nth-child(4) { animation-delay: 240ms; }
+.skeleton-grid .skeleton-card:nth-child(5) { animation-delay: 320ms; }
+.skeleton-grid .skeleton-card:nth-child(6) { animation-delay: 400ms; }
 
-@keyframes skeleton-fade-in {
+@keyframes skeletonCardEnter {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(16px) scale(0.98);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }

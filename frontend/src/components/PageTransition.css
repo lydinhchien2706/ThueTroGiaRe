@@ -5,41 +5,74 @@
 
 .page-transition {
   /* Enable GPU acceleration for smoother animations */
-  will-change: opacity, transform;
+  will-change: opacity, transform, filter;
   transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
 
-/* Enter animation - fade in and slide up subtly */
+/* Enter animation - elegant fade in with subtle slide and scale */
 .page-transition--enter {
-  animation: pageEnter 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: pageEnterPremium 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-/* Exit animation - fade out quickly */
+/* Exit animation - quick fade out */
 .page-transition--exit {
-  animation: pageExit 0.15s cubic-bezier(0.64, 0, 0.78, 0) forwards;
+  animation: pageExitPremium 0.2s cubic-bezier(0.64, 0, 0.78, 0) forwards;
 }
 
-@keyframes pageEnter {
+/* Mobile: Lighter animations without blur for performance */
+@keyframes pageEnterPremium {
   0% {
     opacity: 0;
-    transform: translateY(12px) translateZ(0);
+    transform: translateY(16px) scale(0.99) translateZ(0);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) translateZ(0);
+    transform: translateY(0) scale(1) translateZ(0);
   }
 }
 
-@keyframes pageExit {
+@keyframes pageExitPremium {
   0% {
     opacity: 1;
-    transform: translateY(0) translateZ(0);
+    transform: translateY(0) scale(1) translateZ(0);
   }
   100% {
     opacity: 0;
-    transform: translateY(-8px) translateZ(0);
+    transform: translateY(-8px) scale(0.99) translateZ(0);
+  }
+}
+
+/* Desktop: Add blur effect for premium feel */
+@media (min-width: 1024px) {
+  @keyframes pageEnterPremium {
+    0% {
+      opacity: 0;
+      transform: translateY(20px) scale(0.98) translateZ(0);
+      filter: blur(4px);
+    }
+    50% {
+      filter: blur(0);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1) translateZ(0);
+      filter: blur(0);
+    }
+  }
+
+  @keyframes pageExitPremium {
+    0% {
+      opacity: 1;
+      transform: translateY(0) scale(1) translateZ(0);
+      filter: blur(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-12px) scale(0.99) translateZ(0);
+      filter: blur(2px);
+    }
   }
 }
 
@@ -50,6 +83,7 @@
     animation: none;
     opacity: 1;
     transform: none;
+    filter: none;
   }
   
   .page-transition {

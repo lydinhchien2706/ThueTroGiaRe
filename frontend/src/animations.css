@@ -995,3 +995,804 @@ main {
   will-change: transform;
   transform: translateZ(0);
 }
+
+/* =====================================================
+   23. PREMIUM GRADIENT ANIMATIONS
+   ===================================================== */
+
+/* Animated Gradient Background */
+.gradient-animate {
+  background: linear-gradient(
+    -45deg,
+    var(--color-primary),
+    #0d9488,
+    var(--color-secondary),
+    #0891b2
+  );
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Aurora/Northern Lights Effect */
+.aurora-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.aurora-bg::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    radial-gradient(ellipse at 20% 80%, rgba(16, 185, 129, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(99, 102, 241, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 40% 40%, rgba(14, 165, 233, 0.1) 0%, transparent 50%);
+  animation: auroraMove 20s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes auroraMove {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(2%, 2%) rotate(1deg); }
+  50% { transform: translate(-1%, 3%) rotate(-1deg); }
+  75% { transform: translate(-2%, -1%) rotate(0.5deg); }
+}
+
+/* =====================================================
+   24. PREMIUM GLOW EFFECTS
+   ===================================================== */
+
+/* Soft Glow Button */
+.btn-glow {
+  position: relative;
+  z-index: 1;
+}
+
+.btn-glow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: inherit;
+  border-radius: inherit;
+  filter: blur(12px);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity var(--duration-base) var(--ease-out);
+}
+
+.btn-glow:hover::before {
+  opacity: 0.5;
+}
+
+/* Pulsing Glow for CTAs */
+.glow-pulse {
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 0 0 rgba(16, 185, 129, 0.4),
+      0 4px 12px rgba(16, 185, 129, 0.2);
+  }
+  50% {
+    box-shadow: 
+      0 0 20px 8px rgba(16, 185, 129, 0.15),
+      0 6px 20px rgba(16, 185, 129, 0.3);
+  }
+}
+
+/* Subtle Border Glow Animation */
+.border-glow {
+  position: relative;
+}
+
+.border-glow::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(
+    45deg,
+    var(--color-primary),
+    var(--color-secondary),
+    var(--color-primary)
+  );
+  background-size: 200% 200%;
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  animation: borderGlowRotate 3s linear infinite;
+  transition: opacity var(--duration-base) var(--ease-out);
+}
+
+.border-glow:hover::after {
+  opacity: 1;
+}
+
+@keyframes borderGlowRotate {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* =====================================================
+   25. FLOATING & PARALLAX EFFECTS
+   ===================================================== */
+
+/* Floating animation with rotation */
+.float-gentle {
+  animation: floatGentle 6s ease-in-out infinite;
+}
+
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+  75% {
+    transform: translateY(-4px) rotate(-1deg);
+  }
+}
+
+/* Delayed floating for staggered effects */
+.float-delay-1 { animation-delay: 0s; }
+.float-delay-2 { animation-delay: -1.5s; }
+.float-delay-3 { animation-delay: -3s; }
+.float-delay-4 { animation-delay: -4.5s; }
+
+/* Floating decorative elements */
+.floating-decoration {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.15;
+  animation: floatDecoration 8s ease-in-out infinite;
+}
+
+@keyframes floatDecoration {
+  0%, 100% { transform: translateY(0) translateX(0) scale(1); }
+  33% { transform: translateY(-15px) translateX(10px) scale(1.02); }
+  66% { transform: translateY(-8px) translateX(-5px) scale(0.98); }
+}
+
+/* =====================================================
+   26. 3D CARD TILT EFFECT
+   ===================================================== */
+
+/* Card with subtle 3D perspective on hover */
+.card-3d {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.card-3d-inner {
+  transition: transform var(--duration-slow) var(--ease-out);
+  transform-style: preserve-3d;
+}
+
+@media (min-width: 1024px) {
+  .card-3d:hover .card-3d-inner {
+    transform: rotateX(2deg) rotateY(-2deg) translateZ(10px);
+  }
+}
+
+/* Shine overlay effect on card hover */
+.card-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-shine::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transform: skewX(-25deg);
+  transition: none;
+  z-index: 1;
+  pointer-events: none;
+}
+
+@media (min-width: 1024px) {
+  .card-shine:hover::before {
+    animation: cardShine 0.8s ease-out;
+  }
+}
+
+@keyframes cardShine {
+  0% { left: -100%; }
+  100% { left: 150%; }
+}
+
+/* =====================================================
+   27. KEN BURNS IMAGE EFFECT
+   ===================================================== */
+
+.ken-burns {
+  overflow: hidden;
+}
+
+.ken-burns img {
+  animation: kenBurns 20s ease-in-out infinite alternate;
+  transform-origin: center center;
+}
+
+@keyframes kenBurns {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  100% {
+    transform: scale(1.1) translate(-2%, -2%);
+  }
+}
+
+/* Multiple Ken Burns variations */
+.ken-burns-1 img { animation-name: kenBurns1; }
+.ken-burns-2 img { animation-name: kenBurns2; }
+.ken-burns-3 img { animation-name: kenBurns3; }
+
+@keyframes kenBurns1 {
+  0% { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.15) translate(-3%, -2%); }
+}
+
+@keyframes kenBurns2 {
+  0% { transform: scale(1.1) translate(-2%, 0); }
+  100% { transform: scale(1) translate(2%, -3%); }
+}
+
+@keyframes kenBurns3 {
+  0% { transform: scale(1) translate(0, -2%); }
+  100% { transform: scale(1.12) translate(-2%, 2%); }
+}
+
+/* =====================================================
+   28. ENHANCED SKELETON LOADING
+   ===================================================== */
+
+/* Premium shimmer with wave effect */
+.skeleton-premium {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-gray-100);
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-premium::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 20%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 255, 255, 0.4) 80%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: skeletonWave 1.8s ease-in-out infinite;
+}
+
+@keyframes skeletonWave {
+  0% { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(200%) skewX(-15deg); }
+}
+
+/* Skeleton with pulse glow */
+.skeleton-glow {
+  background: linear-gradient(
+    110deg,
+    var(--color-gray-100) 8%,
+    var(--color-gray-50) 18%,
+    var(--color-gray-100) 33%
+  );
+  background-size: 200% 100%;
+  animation: skeletonGlow 1.5s linear infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes skeletonGlow {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* =====================================================
+   29. TEXT ANIMATIONS
+   ===================================================== */
+
+/* Typewriter effect */
+.typewriter {
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typing 3s steps(30, end);
+}
+
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+/* Gradient text animation */
+.text-gradient-animate {
+  background: linear-gradient(
+    90deg,
+    var(--color-primary),
+    var(--color-secondary),
+    var(--color-primary)
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: textGradient 3s linear infinite;
+}
+
+@keyframes textGradient {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Character stagger reveal */
+.char-reveal {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(20px) rotateX(-90deg);
+  animation: charReveal 0.5s var(--ease-out) forwards;
+}
+
+@keyframes charReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg);
+  }
+}
+
+/* Word wave animation */
+.text-wave {
+  display: inline-block;
+  animation: textWave 1s ease-in-out infinite;
+}
+
+@keyframes textWave {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* =====================================================
+   30. ENHANCED BUTTON EFFECTS
+   ===================================================== */
+
+/* Ripple effect with better animation */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-ripple .ripple-effect {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(0);
+  animation: rippleExpand 0.6s ease-out;
+  pointer-events: none;
+}
+
+@keyframes rippleExpand {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Magnetic button effect (CSS only approximation) */
+.btn-magnetic {
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+@media (min-width: 1024px) {
+  .btn-magnetic:hover {
+    transform: scale(1.05) translateY(-2px);
+  }
+  
+  .btn-magnetic:active {
+    transform: scale(0.98);
+    transition-duration: var(--duration-instant);
+  }
+}
+
+/* Gradient border button */
+.btn-gradient-border {
+  position: relative;
+  background: var(--color-white);
+  z-index: 1;
+}
+
+.btn-gradient-border::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-secondary)
+  );
+  border-radius: inherit;
+  z-index: -1;
+}
+
+.btn-gradient-border::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  z-index: -1;
+  transition: opacity var(--duration-base) var(--ease-out);
+}
+
+.btn-gradient-border:hover::after {
+  opacity: 0;
+}
+
+.btn-gradient-border:hover {
+  color: var(--color-white);
+}
+
+/* =====================================================
+   31. NOTIFICATION & TOAST ANIMATIONS
+   ===================================================== */
+
+/* Slide in from top */
+.toast-enter {
+  animation: toastEnter 0.4s var(--ease-out-back);
+}
+
+@keyframes toastEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-100%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Slide out to top */
+.toast-exit {
+  animation: toastExit 0.3s var(--ease-in) forwards;
+}
+
+@keyframes toastExit {
+  to {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.9);
+  }
+}
+
+/* Progress bar animation for toast timeout */
+.toast-progress {
+  height: 3px;
+  background: var(--color-primary);
+  animation: toastProgress 5s linear forwards;
+  transform-origin: left;
+}
+
+@keyframes toastProgress {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
+/* =====================================================
+   32. COUNTER/NUMBER ANIMATION SUPPORT
+   ===================================================== */
+
+/* Animated counter container */
+.counter-animate {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Number flip animation */
+.number-flip {
+  display: inline-block;
+  animation: numberFlip 0.3s var(--ease-out);
+}
+
+@keyframes numberFlip {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Counting scale effect */
+.counter-pop {
+  animation: counterPop 0.4s var(--ease-out-back);
+}
+
+@keyframes counterPop {
+  0% { transform: scale(0.5); opacity: 0; }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* =====================================================
+   33. HOVER REVEAL EFFECTS
+   ===================================================== */
+
+/* Reveal content from bottom */
+.reveal-up {
+  overflow: hidden;
+}
+
+.reveal-up .reveal-content {
+  transform: translateY(100%);
+  opacity: 0;
+  transition: 
+    transform var(--duration-slow) var(--ease-out),
+    opacity var(--duration-slow) var(--ease-out);
+}
+
+.reveal-up:hover .reveal-content {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Reveal with blur */
+.reveal-blur {
+  overflow: hidden;
+}
+
+.reveal-blur .reveal-content {
+  opacity: 0;
+  filter: blur(10px);
+  transition: 
+    opacity var(--duration-slow) var(--ease-out),
+    filter var(--duration-slow) var(--ease-out);
+}
+
+.reveal-blur:hover .reveal-content {
+  opacity: 1;
+  filter: blur(0);
+}
+
+/* Image overlay reveal */
+.image-overlay-reveal {
+  position: relative;
+  overflow: hidden;
+}
+
+.image-overlay-reveal .overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.8) 0%,
+    transparent 50%
+  );
+  opacity: 0;
+  transition: opacity var(--duration-slow) var(--ease-out);
+}
+
+.image-overlay-reveal:hover .overlay {
+  opacity: 1;
+}
+
+/* =====================================================
+   34. SCROLL PROGRESS INDICATOR
+   ===================================================== */
+
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary),
+    var(--color-secondary)
+  );
+  transform-origin: left;
+  transform: scaleX(0);
+  z-index: 9999;
+  transition: transform 0.1s linear;
+}
+
+/* =====================================================
+   35. FANCY UNDERLINE ANIMATIONS
+   ===================================================== */
+
+/* Animated underline from center */
+.underline-center {
+  position: relative;
+  text-decoration: none;
+}
+
+.underline-center::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: currentColor;
+  transition: 
+    width var(--duration-base) var(--ease-out),
+    left var(--duration-base) var(--ease-out);
+}
+
+.underline-center:hover::after {
+  width: 100%;
+  left: 0;
+}
+
+/* Animated underline from left */
+.underline-left {
+  position: relative;
+  text-decoration: none;
+}
+
+.underline-left::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: currentColor;
+  transition: width var(--duration-base) var(--ease-out);
+}
+
+.underline-left:hover::after {
+  width: 100%;
+}
+
+/* Gradient underline */
+.underline-gradient {
+  position: relative;
+  text-decoration: none;
+}
+
+.underline-gradient::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary),
+    var(--color-secondary)
+  );
+  transition: width var(--duration-base) var(--ease-out);
+}
+
+.underline-gradient:hover::after {
+  width: 100%;
+}
+
+/* =====================================================
+   36. MORPHING SHAPES
+   ===================================================== */
+
+.morph-blob {
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  animation: morphBlob 8s ease-in-out infinite;
+}
+
+@keyframes morphBlob {
+  0%, 100% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+  25% {
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+  }
+  50% {
+    border-radius: 50% 60% 30% 60% / 30% 60% 70% 40%;
+  }
+  75% {
+    border-radius: 60% 40% 60% 30% / 70% 30% 50% 60%;
+  }
+}
+
+/* Decorative animated blob */
+.blob-decoration {
+  position: absolute;
+  background: linear-gradient(
+    135deg,
+    rgba(16, 185, 129, 0.1),
+    rgba(99, 102, 241, 0.1)
+  );
+  filter: blur(40px);
+  animation: morphBlob 12s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* =====================================================
+   37. SMOOTH FOCUS TRANSITIONS
+   ===================================================== */
+
+/* Focus ring animation */
+.focus-ring {
+  transition: 
+    box-shadow var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+}
+
+.focus-ring:focus {
+  outline: none;
+  box-shadow: 
+    0 0 0 2px var(--color-white),
+    0 0 0 4px var(--color-primary);
+}
+
+.focus-ring:focus:not(:focus-visible) {
+  box-shadow: none;
+}
+
+.focus-ring:focus-visible {
+  box-shadow: 
+    0 0 0 2px var(--color-white),
+    0 0 0 4px var(--color-primary);
+}
+
+/* Animated focus expand */
+.focus-expand:focus-visible {
+  animation: focusExpand 0.3s var(--ease-out);
+}
+
+@keyframes focusExpand {
+  0% {
+    box-shadow: 
+      0 0 0 2px var(--color-white),
+      0 0 0 2px var(--color-primary);
+  }
+  100% {
+    box-shadow: 
+      0 0 0 2px var(--color-white),
+      0 0 0 4px var(--color-primary);
+  }
+}
