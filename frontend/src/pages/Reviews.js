@@ -6,7 +6,7 @@ import './Reviews.css';
 const Reviews = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState({ type: 'all', minRating: '', sort: 'newest' });
+  const [filter, setFilter] = useState({ type: 'all', minRating: '', sort: 'newest', role: 'all' });
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [activeVideoIndex, setActiveVideoIndex] = useState(0);
@@ -30,6 +30,10 @@ const Reviews = () => {
 
       if (filter.minRating) {
         params.minRating = filter.minRating;
+      }
+
+      if (filter.role !== 'all') {
+        params.role = filter.role;
       }
 
       const response = await reviewsAPI.getAllReviews(params);
@@ -156,6 +160,27 @@ const Reviews = () => {
                 onClick={() => handleFilterChange('type', 'image')}
               >
                 📷 Ảnh
+              </button>
+            </div>
+
+            <div className="filter-group">
+              <button
+                className={`filter-btn ${filter.role === 'all' ? 'active' : ''}`}
+                onClick={() => handleFilterChange('role', 'all')}
+              >
+                Tất cả người đánh giá
+              </button>
+              <button
+                className={`filter-btn ${filter.role === 'landlord' ? 'active' : ''}`}
+                onClick={() => handleFilterChange('role', 'landlord')}
+              >
+                🏠 Chủ nhà
+              </button>
+              <button
+                className={`filter-btn ${filter.role === 'renter' ? 'active' : ''}`}
+                onClick={() => handleFilterChange('role', 'renter')}
+              >
+                👤 Người thuê
               </button>
             </div>
 
