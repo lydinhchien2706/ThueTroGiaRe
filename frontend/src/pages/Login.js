@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { LoadingDots } from '../components/FeedbackAnimation';
 import './Auth.css';
 
 const Login = () => {
@@ -10,8 +11,18 @@ const Login = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showError, setShowError] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  // Reset error animation when error changes
+  useEffect(() => {
+    if (error) {
+      setShowError(true);
+      const timer = setTimeout(() => setShowError(false), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -35,11 +46,15 @@ const Login = () => {
 
   return (
     <div className="auth-page">
-      <div className="auth-container">
+      <div className="auth-container animate-scale-in">
         <h1 className="auth-title">Đăng Nhập</h1>
         <p className="auth-subtitle">Đăng nhập để quản lý tin đăng của bạn</p>
 
-        {error && <div className="alert alert-error">{error}</div>}
+        {error && (
+          <div className={`alert alert-error ${showError ? 'animate-error' : ''}`}>
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
@@ -68,8 +83,12 @@ const Login = () => {
             />
           </div>
 
-          <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
-            {loading ? 'Đang xử lý...' : 'Đăng nhập'}
+          <button 
+            type="submit" 
+            className={`btn btn-primary btn-block ${loading ? 'btn-loading' : ''}`} 
+            disabled={loading}
+          >
+            {loading ? <LoadingDots className="light inline" /> : 'Đăng nhập'}
           </button>
         </form>
 

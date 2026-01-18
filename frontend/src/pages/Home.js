@@ -1,16 +1,43 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import SearchBar from '../components/SearchBar';
 import ListingCard from '../components/ListingCard';
+import { SkeletonGrid } from '../components/SkeletonCard';
 import { listingsAPI } from '../services/api';
 import './Home.css';
 
 const Home = () => {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [visibleCards, setVisibleCards] = useState([]);
+  const gridRef = useRef(null);
 
   useEffect(() => {
     fetchLatestListings();
   }, []);
+
+  // Intersection Observer for scroll-based animations
+  useEffect(() => {
+    if (!gridRef.current || loading) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const id = entry.target.dataset.id;
+            if (id && !visibleCards.includes(id)) {
+              setVisibleCards((prev) => [...prev, id]);
+            }
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '50px' }
+    );
+
+    const cards = gridRef.current.querySelectorAll('.listing-card-wrapper');
+    cards.forEach((card) => observer.observe(card));
+
+    return () => observer.disconnect();
+  }, [loading, listings, visibleCards]);
 
   const fetchLatestListings = async () => {
     try {
@@ -27,11 +54,13 @@ const Home = () => {
     <div className="home-page">
       <section className="hero-section">
         <div className="container">
-          <h1 className="hero-title">Tìm Phòng Trọ Giá Rẻ</h1>
-          <p className="hero-subtitle">
+          <h1 className="hero-title animate-slide-up">Tìm Phòng Trọ Giá Rẻ</h1>
+          <p className="hero-subtitle animate-slide-up" style={{ animationDelay: '100ms' }}>
             Hàng ngàn tin đăng cho thuê phòng trọ, nhà nguyên căn, căn hộ trên toàn quốc
           </p>
-          <SearchBar />
+          <div className="animate-slide-up" style={{ animationDelay: '200ms' }}>
+            <SearchBar />
+          </div>
         </div>
       </section>
 
@@ -39,17 +68,26 @@ const Home = () => {
         <div className="container">
           <h2 className="section-title">Tin Đăng Mới Nhất</h2>
           {loading ? (
-            <div className="loading">Đang tải...</div>
+            <SkeletonGrid count={6} />
           ) : (
             <>
               {listings.length > 0 ? (
-                <div className="listings-grid">
-                  {listings.map((listing) => (
-                    <ListingCard key={listing.id} listing={listing} />
+                <div className="listings-grid" ref={gridRef}>
+                  {listings.map((listing, index) => (
+                    <div
+                      key={listing.id}
+                      className={`listing-card-wrapper animate-on-scroll ${
+                        visibleCards.includes(String(listing.id)) ? 'visible' : ''
+                      }`}
+                      data-id={listing.id}
+                      style={{ transitionDelay: `${index * 60}ms` }}
+                    >
+                      <ListingCard listing={listing} />
+                    </div>
                   ))}
                 </div>
               ) : (
-                <div className="no-listings">Chưa có tin đăng nào</div>
+                <div className="no-listings animate-fade-in">Chưa có tin đăng nào</div>
               )}
             </>
           )}

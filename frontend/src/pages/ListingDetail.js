@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { listingsAPI } from '../services/api';
 import './ListingDetail.css';
@@ -8,11 +8,7 @@ const ListingDetail = () => {
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchListing();
-  }, [id]);
-
-  const fetchListing = async () => {
+  const fetchListing = useCallback(async () => {
     try {
       const response = await listingsAPI.getListingById(id);
       setListing(response.data.data.listing);
@@ -21,7 +17,11 @@ const ListingDetail = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchListing();
+  }, [fetchListing]);
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('vi-VN', {

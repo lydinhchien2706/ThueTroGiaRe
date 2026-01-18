@@ -1,0 +1,133 @@
+/* FeedbackAnimation Styles */
+
+/* Success Animation - Checkmark */
+.feedback-animation {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.success-animation {
+  animation: success-pop 0.5s var(--ease-spring);
+}
+
+.checkmark {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: block;
+  stroke-width: 2;
+  stroke: var(--color-success);
+  stroke-miterlimit: 10;
+  box-shadow: inset 0 0 0 var(--color-success);
+}
+
+.checkmark-circle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 2;
+  stroke-miterlimit: 10;
+  stroke: var(--color-success);
+  fill: none;
+  animation: stroke 0.6s var(--ease-out) forwards;
+}
+
+.checkmark-check {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  stroke-width: 3;
+  stroke: var(--color-success);
+  animation: stroke 0.3s var(--ease-out) 0.4s forwards;
+}
+
+@keyframes stroke {
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes success-pop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Error Animation Wrapper */
+.error-animation-wrapper {
+  display: inline-block;
+}
+
+/* Save Animation Wrapper */
+.save-animation-wrapper {
+  display: inline-block;
+}
+
+/* Loading Dots - Modern alternative to spinner */
+.loading-dots {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.loading-dots span {
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-primary);
+  border-radius: 50%;
+  animation: dot-bounce 1.2s ease-in-out infinite;
+}
+
+.loading-dots span:nth-child(1) {
+  animation-delay: 0ms;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: 200ms;
+}
+
+.loading-dots span:nth-child(3) {
+  animation-delay: 400ms;
+}
+
+@keyframes dot-bounce {
+  0%, 80%, 100% {
+    transform: scale(0.6);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Inline loading for buttons */
+.loading-dots.inline {
+  gap: 4px;
+}
+
+.loading-dots.inline span {
+  width: 6px;
+  height: 6px;
+  background-color: currentColor;
+}
+
+/* Small variant */
+.loading-dots.small span {
+  width: 5px;
+  height: 5px;
+}
+
+/* Light variant for dark backgrounds */
+.loading-dots.light span {
+  background-color: var(--color-white);
+}

@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './ListingCard.css';
 
 const ListingCard = ({ listing }) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
   const formatPrice = (price) => {
     return new Intl.NumberFormat('vi-VN', {
       style: 'currency',
@@ -20,14 +23,18 @@ const ListingCard = ({ listing }) => {
   };
 
   const primaryImage = listing.images?.find((img) => img.is_primary) || listing.images?.[0];
+  const placeholderImage = 'https://via.placeholder.com/400x300?text=No+Image';
 
   return (
     <div className="listing-card">
       <Link to={`/listings/${listing.id}`} className="listing-card-link">
-        <div className="listing-image">
+        <div className="listing-image image-zoom-container">
           <img
-            src={primaryImage?.image_url || 'https://via.placeholder.com/400x300?text=No+Image'}
+            src={imageError ? placeholderImage : (primaryImage?.image_url || placeholderImage)}
             alt={listing.title}
+            className={`progressive-img ${imageLoaded ? 'loaded' : 'loading'}`}
+            onLoad={() => setImageLoaded(true)}
+            onError={() => setImageError(true)}
           />
           <div className="listing-type-badge">{getTypeLabel(listing.type)}</div>
         </div>
