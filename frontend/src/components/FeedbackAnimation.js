@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './FeedbackAnimation.css';
 
 /**
@@ -103,20 +103,34 @@ export const useFeedbackAnimation = (duration = 2000) => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [showSave, setShowSave] = useState(false);
+  const timeoutRefs = useRef({ success: null, error: null, save: null });
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    const refs = timeoutRefs.current;
+    return () => {
+      if (refs.success) clearTimeout(refs.success);
+      if (refs.error) clearTimeout(refs.error);
+      if (refs.save) clearTimeout(refs.save);
+    };
+  }, []);
 
   const triggerSuccess = useCallback(() => {
     setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), duration);
+    if (timeoutRefs.current.success) clearTimeout(timeoutRefs.current.success);
+    timeoutRefs.current.success = setTimeout(() => setShowSuccess(false), duration);
   }, [duration]);
 
   const triggerError = useCallback(() => {
     setShowError(true);
-    setTimeout(() => setShowError(false), duration);
+    if (timeoutRefs.current.error) clearTimeout(timeoutRefs.current.error);
+    timeoutRefs.current.error = setTimeout(() => setShowError(false), duration);
   }, [duration]);
 
   const triggerSave = useCallback(() => {
     setShowSave(true);
-    setTimeout(() => setShowSave(false), 400);
+    if (timeoutRefs.current.save) clearTimeout(timeoutRefs.current.save);
+    timeoutRefs.current.save = setTimeout(() => setShowSave(false), 400);
   }, []);
 
   return {

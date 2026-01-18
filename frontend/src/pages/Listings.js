@@ -15,7 +15,7 @@ const Listings = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState({});
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-  const [visibleCards, setVisibleCards] = useState([]);
+  const [visibleCardIds, setVisibleCardIds] = useState(new Set());
   const gridRef = useRef(null);
 
   // Initialize filters from URL params (only on mount)
@@ -37,7 +37,7 @@ const Listings = () => {
 
   const fetchListings = useCallback(async () => {
     setLoading(true);
-    setVisibleCards([]); // Reset visible cards on new fetch
+    setVisibleCardIds(new Set()); // Reset visible cards on new fetch
     try {
       const params = Object.fromEntries(searchParams);
       const response = await listingsAPI.getListings({ ...params, page: currentPage, limit: 12 });
@@ -63,8 +63,13 @@ const Listings = () => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const id = entry.target.dataset.id;
-            if (id && !visibleCards.includes(id)) {
-              setVisibleCards((prev) => [...prev, id]);
+            if (id) {
+              setVisibleCardIds((prev) => {
+                if (prev.has(id)) return prev;
+                const next = new Set(prev);
+                next.add(id);
+                return next;
+              });
             }
           }
         });
@@ -76,7 +81,7 @@ const Listings = () => {
     cards.forEach((card) => observer.observe(card));
 
     return () => observer.disconnect();
-  }, [loading, listings, visibleCards]);
+  }, [loading, listings]);
 
   const handleFilterChange = (key, value) => {
     setFilters((prev) => ({
@@ -191,7 +196,7 @@ const Listings = () => {
                         <div
                           key={listing.id}
                           className={`listing-card-wrapper animate-on-scroll ${
-                            visibleCards.includes(String(listing.id)) ? 'visible' : ''
+                            visibleCardIds.has(String(listing.id)) ? 'visible' : ''
                           }`}
                           data-id={listing.id}
                           style={{ transitionDelay: `${(index % 6) * 60}ms` }}

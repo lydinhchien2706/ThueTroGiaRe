@@ -8,7 +8,7 @@ import './Home.css';
 const Home = () => {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [visibleCards, setVisibleCards] = useState([]);
+  const [visibleCardIds, setVisibleCardIds] = useState(new Set());
   const gridRef = useRef(null);
 
   useEffect(() => {
@@ -24,8 +24,13 @@ const Home = () => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const id = entry.target.dataset.id;
-            if (id && !visibleCards.includes(id)) {
-              setVisibleCards((prev) => [...prev, id]);
+            if (id) {
+              setVisibleCardIds((prev) => {
+                if (prev.has(id)) return prev;
+                const next = new Set(prev);
+                next.add(id);
+                return next;
+              });
             }
           }
         });
@@ -37,7 +42,7 @@ const Home = () => {
     cards.forEach((card) => observer.observe(card));
 
     return () => observer.disconnect();
-  }, [loading, listings, visibleCards]);
+  }, [loading, listings]);
 
   const fetchLatestListings = async () => {
     try {
@@ -77,7 +82,7 @@ const Home = () => {
                     <div
                       key={listing.id}
                       className={`listing-card-wrapper animate-on-scroll ${
-                        visibleCards.includes(String(listing.id)) ? 'visible' : ''
+                        visibleCardIds.has(String(listing.id)) ? 'visible' : ''
                       }`}
                       data-id={listing.id}
                       style={{ transitionDelay: `${index * 60}ms` }}
