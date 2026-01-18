@@ -58,6 +58,10 @@ const Dashboard = () => {
     return types[type] || type;
   };
 
+  // Calculate stats
+  const activeListings = listings.filter(l => l.status === 'active').length;
+  const inactiveListings = listings.filter(l => l.status !== 'active').length;
+
   if (loading) {
     return (
       <div className="container">
@@ -79,55 +83,74 @@ const Dashboard = () => {
           </Link>
         </div>
 
+        {/* Statistics Cards */}
+        <div className="dashboard-stats">
+          <div className="stat-card">
+            <div className="stat-icon">📋</div>
+            <div className="stat-value">{listings.length}</div>
+            <div className="stat-label">Tổng tin đăng</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-icon">✅</div>
+            <div className="stat-value">{activeListings}</div>
+            <div className="stat-label">Đang hiển thị</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-icon">⏸️</div>
+            <div className="stat-value">{inactiveListings}</div>
+            <div className="stat-label">Đang ẩn</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-icon">👁️</div>
+            <div className="stat-value">0</div>
+            <div className="stat-label">Lượt xem</div>
+          </div>
+        </div>
+
         <div className="dashboard-content">
           <h2>Tin đăng của tôi ({listings.length})</h2>
 
           {listings.length > 0 ? (
-            <div className="listings-table">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Tiêu đề</th>
-                    <th>Loại</th>
-                    <th>Giá</th>
-                    <th>Trạng thái</th>
-                    <th>Ngày đăng</th>
-                    <th>Hành động</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {listings.map((listing) => (
-                    <tr key={listing.id}>
-                      <td>
-                        <Link to={`/listings/${listing.id}`} className="listing-link">
-                          {listing.title}
-                        </Link>
-                      </td>
-                      <td>{getTypeLabel(listing.type)}</td>
-                      <td>{formatPrice(listing.price)}</td>
-                      <td>
-                        <span className={`status-badge status-${listing.status}`}>
-                          {listing.status === 'active' ? 'Đang hiển thị' : 'Không hiển thị'}
-                        </span>
-                      </td>
-                      <td>{new Date(listing.created_at).toLocaleDateString('vi-VN')}</td>
-                      <td>
-                        <div className="action-buttons">
-                          <Link to={`/listings/${listing.id}`} className="btn btn-sm btn-outline">
-                            Xem
-                          </Link>
-                          <button
-                            onClick={() => handleDelete(listing.id)}
-                            className="btn btn-sm btn-danger"
-                          >
-                            Xóa
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="dashboard-listings-grid">
+              {listings.map((listing) => (
+                <div key={listing.id} className="dashboard-listing-card">
+                  <div className="card-header">
+                    <h3 className="card-title">
+                      <Link to={`/listings/${listing.id}`}>{listing.title}</Link>
+                    </h3>
+                    <span className={`status-badge status-${listing.status}`}>
+                      {listing.status === 'active' ? 'Hiển thị' : 'Ẩn'}
+                    </span>
+                  </div>
+                  <div className="card-body">
+                    <div className="card-info">
+                      <span className="card-info-item">
+                        🏠 {getTypeLabel(listing.type)}
+                      </span>
+                      <span className="card-info-item">
+                        📐 {listing.area}m²
+                      </span>
+                    </div>
+                    <div className="card-price">{formatPrice(listing.price)}/tháng</div>
+                  </div>
+                  <div className="card-footer">
+                    <span className="card-date">
+                      {new Date(listing.created_at).toLocaleDateString('vi-VN')}
+                    </span>
+                    <div className="action-buttons">
+                      <Link to={`/listings/${listing.id}`} className="btn btn-sm btn-outline">
+                        Xem
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(listing.id)}
+                        className="btn btn-sm btn-danger"
+                      >
+                        Xóa
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           ) : (
             <div className="no-listings">
