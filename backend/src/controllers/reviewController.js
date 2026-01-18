@@ -51,6 +51,45 @@ const validateMediaItems = (mediaArray) => {
   return true;
 };
 
+/**
+ * Shared error handler for review operations.
+ * Handles common Sequelize errors and returns appropriate HTTP responses.
+ * @param {Object} res - Express response object
+ * @param {Error} error - The error object to handle
+ * @param {string} operation - Description of the operation that failed (e.g., 'tạo review')
+ * @returns {Object} Express response with appropriate status code and error message
+ */
+const handleReviewError = (res, error, operation) => {
+  // Handle specific database/validation errors
+  if (error.name === 'SequelizeValidationError') {
+    const validationMessages = error.errors.map(e => e.message).join(', ');
+    return res.status(400).json({
+      success: false,
+      message: `Dữ liệu không hợp lệ: ${validationMessages}`
+    });
+  }
+  
+  if (error.name === 'SequelizeForeignKeyConstraintError') {
+    return res.status(400).json({
+      success: false,
+      message: 'Phòng trọ hoặc người dùng không tồn tại'
+    });
+  }
+  
+  if (error.name === 'SequelizeConnectionError' || error.name === 'SequelizeConnectionRefusedError') {
+    return res.status(503).json({
+      success: false,
+      message: 'Không thể kết nối đến cơ sở dữ liệu. Vui lòng thử lại sau.'
+    });
+  }
+  
+  return res.status(500).json({
+    success: false,
+    message: `Lỗi server khi ${operation}. Vui lòng thử lại.`,
+    error: process.env.NODE_ENV === 'development' ? error.message : undefined
+  });
+};
+
 // Get reviews for a room/listing
 exports.getReviewsByRoom = async (req, res) => {
   try {
@@ -393,11 +432,7 @@ exports.createReview = async (req, res) => {
   } catch (error) {
     await transaction.rollback();
     console.error('Create review error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Lỗi server',
-      error: error.message
-    });
+    return handleReviewError(res, error, 'tạo review');
   }
 };
 
@@ -522,11 +557,7 @@ exports.createReviewWithUpload = async (req, res) => {
     await transaction.rollback();
     cleanupUploadedFiles(files);
     console.error('Create review with upload error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Lỗi server',
-      error: error.message
-    });
+    return handleReviewError(res, error, 'tạo review');
   }
 };
 
@@ -569,11 +600,7 @@ exports.updateReview = async (req, res) => {
     });
   } catch (error) {
     console.error('Update review error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Lỗi server',
-      error: error.message
-    });
+    return handleReviewError(res, error, 'cập nhật review');
   }
 };
 
@@ -607,11 +634,7 @@ exports.deleteReview = async (req, res) => {
     });
   } catch (error) {
     console.error('Delete review error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Lỗi server',
-      error: error.message
-    });
+    return handleReviewError(res, error, 'xóa review');
   }
 };
 

@@ -48,8 +48,69 @@ const upload = multer({
   }
 });
 
-// Export upload middleware for review media
-const uploadReviewMedia = upload.array('media', 10);
+// Base upload middleware for review media
+const uploadReviewMediaBase = upload.array('media', 10);
+
+// Wrapper middleware to handle multer errors with proper error messages
+const uploadReviewMedia = (req, res, next) => {
+  uploadReviewMediaBase(req, res, (err) => {
+    if (err) {
+      // Handle multer-specific errors
+      if (err instanceof multer.MulterError) {
+        let message = 'Lỗi khi tải file lên';
+        
+        switch (err.code) {
+          case 'LIMIT_FILE_SIZE':
+            message = 'File quá lớn. Tối đa 100MB cho mỗi file';
+            break;
+          case 'LIMIT_FILE_COUNT':
+            message = 'Quá nhiều file. Tối đa 10 file';
+            break;
+          case 'LIMIT_UNEXPECTED_FILE':
+            message = 'Tên trường file không đúng. Sử dụng "media" để upload';
+            break;
+          case 'LIMIT_PART_COUNT':
+            message = 'Quá nhiều phần trong form data';
+            break;
+          case 'LIMIT_FIELD_KEY':
+            message = 'Tên trường quá dài';
+            break;
+          case 'LIMIT_FIELD_VALUE':
+            message = 'Giá trị trường quá dài';
+            break;
+          case 'LIMIT_FIELD_COUNT':
+            message = 'Quá nhiều trường trong form';
+            break;
+          default:
+            message = 'Lỗi khi tải file lên';
+        }
+        
+        return res.status(400).json({
+          success: false,
+          message: message
+        });
+      }
+      
+      // Handle file filter errors (wrong file type)
+      if (err.message && err.message.includes('Chỉ chấp nhận file')) {
+        return res.status(400).json({
+          success: false,
+          message: err.message
+        });
+      }
+      
+      // Handle other errors
+      console.error('Upload error:', err);
+      return res.status(500).json({
+        success: false,
+        message: 'Lỗi khi tải file lên. Vui lòng thử lại.',
+        error: process.env.NODE_ENV === 'development' ? err.message : undefined
+      });
+    }
+    
+    next();
+  });
+};
 
 module.exports = {
   uploadReviewMedia,
