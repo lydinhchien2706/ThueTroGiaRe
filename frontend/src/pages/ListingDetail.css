@@ -107,15 +107,14 @@
   transform: scale(1.05);
 }
 
-/* Subtle Ken Burns animation */
+/* Ken Burns effect on gallery images */
 @media (min-width: 1024px) {
   .images-gallery img {
     animation: kenBurnsSubtle 20s ease-in-out infinite alternate;
   }
   
   .images-gallery img:nth-child(2n) {
-    animation-name: kenBurnsSubtle2;
-    animation-delay: -5s;
+    animation: kenBurnsSubtle2 20s ease-in-out -5s infinite alternate;
   }
 }
 

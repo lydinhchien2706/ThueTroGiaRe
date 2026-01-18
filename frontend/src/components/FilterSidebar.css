@@ -170,12 +170,6 @@
   transform: scale(0.99) translateX(2px);
 }
 
-/* Checked state styling */
-.checkbox-label:has(input:checked) {
-  background: rgba(16, 185, 129, 0.08);
-  border-color: rgba(16, 185, 129, 0.2);
-}
-
 .checkbox-label input[type="checkbox"] {
   margin-right: 0.625rem;
   cursor: pointer;
