@@ -102,7 +102,7 @@ const Dashboard = () => {
           </div>
           <div className="stat-card">
             <div className="stat-icon">👁️</div>
-            <div className="stat-value">0</div>
+            <div className="stat-value">--</div>
             <div className="stat-label">Lượt xem</div>
           </div>
         </div>

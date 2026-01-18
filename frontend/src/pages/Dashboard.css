@@ -329,24 +329,9 @@
   transform: scale(0.98);
 }
 
-/* Keep table for backward compatibility - hidden by default */
+/* Table structure hidden - using card-based design instead */
 .listings-table {
   display: none;
-  background-color: var(--color-white);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-card);
-  overflow: hidden;
-}
-
-/* Show table layout on large screens if needed */
-@media (min-width: 1280px) {
-  .listings-table.show-table {
-    display: block;
-  }
-
-  .listings-table.show-table + .dashboard-listings-grid {
-    display: none;
-  }
 }
 
 .listings-table table {
