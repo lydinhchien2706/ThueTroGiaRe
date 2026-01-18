@@ -1,0 +1,134 @@
+/* SkeletonCard - Modern Skeleton Loading Styles */
+
+.skeleton-card {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--color-gray-100);
+}
+
+.skeleton-card-image {
+  height: 180px;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .skeleton-card-image {
+    height: 200px;
+  }
+}
+
+.skeleton-card-content {
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .skeleton-card-content {
+    padding: 1.25rem;
+  }
+}
+
+.skeleton-card-title {
+  height: 1.25rem;
+  width: 85%;
+  margin-bottom: 0.75rem;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-card-price {
+  height: 1.5rem;
+  width: 45%;
+  margin-bottom: 1rem;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-card-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.skeleton-card-detail {
+  height: 1rem;
+  width: 40%;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-card-detail.short {
+  width: 55%;
+}
+
+.skeleton-card-footer {
+  display: flex;
+  gap: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-gray-100);
+}
+
+.skeleton-card-meta {
+  height: 0.875rem;
+  width: 30%;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-card-meta.short {
+  width: 35%;
+}
+
+/* Skeleton Grid */
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .skeleton-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.75rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .skeleton-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+}
+
+/* Skeleton Text Utility */
+.skeleton-text {
+  display: block;
+}
+
+/* Skeleton Image Utility */
+.skeleton-image {
+  width: 100%;
+  position: relative;
+}
+
+/* Staggered animation for skeleton grid */
+.skeleton-grid .skeleton-card {
+  animation: skeleton-fade-in 0.3s ease-out forwards;
+  opacity: 0;
+}
+
+.skeleton-grid .skeleton-card:nth-child(1) { animation-delay: 0ms; }
+.skeleton-grid .skeleton-card:nth-child(2) { animation-delay: 50ms; }
+.skeleton-grid .skeleton-card:nth-child(3) { animation-delay: 100ms; }
+.skeleton-grid .skeleton-card:nth-child(4) { animation-delay: 150ms; }
+.skeleton-grid .skeleton-card:nth-child(5) { animation-delay: 200ms; }
+.skeleton-grid .skeleton-card:nth-child(6) { animation-delay: 250ms; }
+
+@keyframes skeleton-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

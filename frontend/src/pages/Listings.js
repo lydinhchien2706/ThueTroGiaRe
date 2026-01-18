@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import SearchBar from '../components/SearchBar';
 import ListingCard from '../components/ListingCard';
 import FilterSidebar from '../components/FilterSidebar';
+import { SkeletonGrid } from '../components/SkeletonCard';
 import { listingsAPI } from '../services/api';
 import './Listings.css';
 
@@ -14,9 +15,11 @@ const Listings = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState({});
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [visibleCardIds, setVisibleCardIds] = useState(new Set());
+  const gridRef = useRef(null);
 
+  // Initialize filters from URL params (only on mount)
   useEffect(() => {
-    // Initialize filters from URL params
     const initialFilters = {
       min_price: searchParams.get('min_price') || '',
       max_price: searchParams.get('max_price') || '',
@@ -29,14 +32,12 @@ const Listings = () => {
       has_video_review: searchParams.get('has_video_review') || '',
     };
     setFilters(initialFilters);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    fetchListings();
-  }, [searchParams, currentPage]);
-
-  const fetchListings = async () => {
+  const fetchListings = useCallback(async () => {
     setLoading(true);
+    setVisibleCardIds(new Set()); // Reset visible cards on new fetch
     try {
       const params = Object.fromEntries(searchParams);
       const response = await listingsAPI.getListings({ ...params, page: currentPage, limit: 12 });
@@ -47,7 +48,40 @@ const Listings = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchParams, currentPage]);
+
+  useEffect(() => {
+    fetchListings();
+  }, [fetchListings]);
+
+  // Intersection Observer for scroll-based animations
+  useEffect(() => {
+    if (!gridRef.current || loading) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const id = entry.target.dataset.id;
+            if (id) {
+              setVisibleCardIds((prev) => {
+                if (prev.has(id)) return prev;
+                const next = new Set(prev);
+                next.add(id);
+                return next;
+              });
+            }
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '50px' }
+    );
+
+    const cards = gridRef.current.querySelectorAll('.listing-card-wrapper');
+    cards.forEach((card) => observer.observe(card));
+
+    return () => observer.disconnect();
+  }, [loading, listings]);
 
   const handleFilterChange = (key, value) => {
     setFilters((prev) => ({
@@ -111,8 +145,10 @@ const Listings = () => {
   return (
     <div className="listings-page">
       <div className="container">
-        <h1 className="page-title">Tìm Kiếm Phòng Trọ</h1>
-        <SearchBar />
+        <h1 className="page-title animate-slide-up">Tìm Kiếm Phòng Trọ</h1>
+        <div className="animate-slide-up" style={{ animationDelay: '100ms' }}>
+          <SearchBar />
+        </div>
 
         <div className="listings-layout">
           {/* Mobile filter toggle */}
@@ -139,24 +175,39 @@ const Listings = () => {
           {/* Listings Content */}
           <main className="listings-content">
             {loading ? (
-              <div className="loading">Đang tải...</div>
+              <div className="listings-skeleton-wrapper animate-fade-in">
+                <div className="listings-header">
+                  <div className="skeleton" style={{ height: '1.5rem', width: '180px', marginBottom: '0.5rem' }} />
+                  <div className="skeleton" style={{ height: '1rem', width: '120px' }} />
+                </div>
+                <SkeletonGrid count={6} />
+              </div>
             ) : (
               <>
-                <div className="listings-header">
+                <div className="listings-header animate-fade-in">
                   <h2>Kết quả tìm kiếm</h2>
                   <p>Tìm thấy {pagination.total || 0} kết quả</p>
                 </div>
 
                 {listings.length > 0 ? (
                   <>
-                    <div className="listings-grid">
-                      {listings.map((listing) => (
-                        <ListingCard key={listing.id} listing={listing} />
+                    <div className="listings-grid" ref={gridRef}>
+                      {listings.map((listing, index) => (
+                        <div
+                          key={listing.id}
+                          className={`listing-card-wrapper animate-on-scroll ${
+                            visibleCardIds.has(String(listing.id)) ? 'visible' : ''
+                          }`}
+                          data-id={listing.id}
+                          style={{ transitionDelay: `${(index % 6) * 60}ms` }}
+                        >
+                          <ListingCard listing={listing} />
+                        </div>
                       ))}
                     </div>
 
                     {pagination.totalPages > 1 && (
-                      <div className="pagination">
+                      <div className="pagination animate-fade-in">
                         <button
                           onClick={() => handlePageChange(currentPage - 1)}
                           disabled={currentPage === 1}
@@ -178,7 +229,7 @@ const Listings = () => {
                     )}
                   </>
                 ) : (
-                  <div className="no-listings">
+                  <div className="no-listings animate-fade-in">
                     <p>Không tìm thấy kết quả phù hợp</p>
                     <p>Vui lòng thử lại với các tiêu chí khác</p>
                   </div>

@@ -158,6 +158,20 @@
   }
 }
 
+/* Listing Card Wrapper for scroll animations */
+.listing-card-wrapper {
+  width: 100%;
+}
+
+.listing-card-wrapper .listing-card {
+  height: 100%;
+}
+
+/* Skeleton wrapper */
+.listings-skeleton-wrapper {
+  width: 100%;
+}
+
 .loading {
   text-align: center;
   padding: 2rem 1rem;

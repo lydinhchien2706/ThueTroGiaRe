@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { LoadingDots } from '../components/FeedbackAnimation';
 import './Auth.css';
 
 const Register = () => {
@@ -13,8 +14,18 @@ const Register = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showError, setShowError] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
+
+  // Reset error animation when error changes
+  useEffect(() => {
+    if (error) {
+      setShowError(true);
+      const timer = setTimeout(() => setShowError(false), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -51,11 +62,15 @@ const Register = () => {
 
   return (
     <div className="auth-page">
-      <div className="auth-container">
+      <div className="auth-container animate-scale-in">
         <h1 className="auth-title">Đăng Ký</h1>
         <p className="auth-subtitle">Tạo tài khoản để đăng tin cho thuê</p>
 
-        {error && <div className="alert alert-error">{error}</div>}
+        {error && (
+          <div className={`alert alert-error ${showError ? 'animate-error' : ''}`}>
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
@@ -123,8 +138,12 @@ const Register = () => {
             />
           </div>
 
-          <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
-            {loading ? 'Đang xử lý...' : 'Đăng ký'}
+          <button 
+            type="submit" 
+            className={`btn btn-primary btn-block ${loading ? 'btn-loading' : ''}`} 
+            disabled={loading}
+          >
+            {loading ? <LoadingDots className="light inline" /> : 'Đăng ký'}
           </button>
         </form>
 
