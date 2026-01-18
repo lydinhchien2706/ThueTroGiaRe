@@ -4,6 +4,7 @@ const router = express.Router();
 const reviewController = require('../controllers/reviewController');
 const authMiddleware = require('../middleware/auth');
 const { requireAdmin } = require('../middleware/auth');
+const { uploadReviewMedia } = require('../middleware/upload');
 
 // Rate limiting for review routes
 const reviewRateLimiter = rateLimit({
@@ -45,6 +46,9 @@ router.get('/:id', reviewController.getReviewById);
 // ============ Protected Routes (require authentication) ============
 // Create a review for a room
 router.post('/room/:roomId', createReviewLimiter, authMiddleware, reviewController.createReview);
+
+// Create a review with file upload
+router.post('/room/:roomId/upload', createReviewLimiter, authMiddleware, uploadReviewMedia, reviewController.createReviewWithUpload);
 
 // Update a review
 router.put('/:id', authMiddleware, reviewController.updateReview);
