@@ -7,7 +7,7 @@ const Review = sequelize.define('Review', {
     primaryKey: true,
     autoIncrement: true
   },
-  listing_id: {
+  room_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
@@ -23,6 +23,30 @@ const Review = sequelize.define('Review', {
       key: 'id'
     }
   },
+  role: {
+    type: DataTypes.STRING(20),
+    allowNull: false,
+    defaultValue: 'renter',
+    validate: {
+      isIn: [['admin', 'landlord', 'renter']]
+    }
+  },
+  type: {
+    type: DataTypes.STRING(20),
+    allowNull: false,
+    defaultValue: 'mixed',
+    validate: {
+      isIn: [['video', 'image', 'mixed']]
+    }
+  },
+  title: {
+    type: DataTypes.STRING(255),
+    allowNull: true
+  },
+  content: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
   rating: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -31,9 +55,17 @@ const Review = sequelize.define('Review', {
       max: 5
     }
   },
-  comment: {
-    type: DataTypes.TEXT,
-    allowNull: true
+  status: {
+    type: DataTypes.STRING(20),
+    allowNull: false,
+    defaultValue: 'pending',
+    validate: {
+      isIn: [['pending', 'approved', 'rejected']]
+    }
+  },
+  is_featured: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
   },
   created_at: {
     type: DataTypes.DATE,
@@ -53,10 +85,14 @@ Review.associate = () => {
   const Listing = require('./Listing');
   const User = require('./User');
   const ReviewVideo = require('./ReviewVideo');
+  const ReviewImage = require('./ReviewImage');
+  const ReviewMedia = require('./ReviewMedia');
   
-  Review.belongsTo(Listing, { foreignKey: 'listing_id', as: 'listing' });
+  Review.belongsTo(Listing, { foreignKey: 'room_id', as: 'room' });
   Review.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
   Review.hasMany(ReviewVideo, { foreignKey: 'review_id', as: 'videos' });
+  Review.hasMany(ReviewImage, { foreignKey: 'review_id', as: 'images' });
+  Review.hasMany(ReviewMedia, { foreignKey: 'review_id', as: 'media' });
 };
 
 module.exports = Review;

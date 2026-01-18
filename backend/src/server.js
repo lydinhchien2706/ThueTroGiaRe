@@ -9,6 +9,7 @@ const locationRoutes = require('./routes/locationRoutes');
 const filterRoutes = require('./routes/filterRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const mediaRoutes = require('./routes/mediaRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
 
 // Import models to set up associations
 const User = require('./models/User');
@@ -24,6 +25,7 @@ const ListingVideo = require('./models/ListingVideo');
 const ListingMedia = require('./models/ListingMedia');
 const MediaLike = require('./models/MediaLike');
 const ReviewImage = require('./models/ReviewImage');
+const ReviewMedia = require('./models/ReviewMedia');
 
 // Initialize associations
 if (Listing.associate) Listing.associate();
@@ -36,6 +38,7 @@ if (ListingVideo.associate) ListingVideo.associate();
 if (ListingMedia.associate) ListingMedia.associate();
 if (MediaLike.associate) MediaLike.associate();
 if (ReviewImage.associate) ReviewImage.associate();
+if (ReviewMedia.associate) ReviewMedia.associate();
 
 // Set up AdminLog associations
 AdminLog.belongsTo(User, { foreignKey: 'admin_id', as: 'admin' });
@@ -70,6 +73,7 @@ app.use('/api/locations', locationRoutes);
 app.use('/api/filters', filterRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/media', mediaRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

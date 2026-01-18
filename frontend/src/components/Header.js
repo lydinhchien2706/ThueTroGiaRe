@@ -56,6 +56,7 @@ const Header = () => {
               <Link to="/listings?type=phong-tro" className="nav-link" onClick={closeMobileMenu}>Phòng trọ</Link>
               <Link to="/listings?type=nha-nguyen-can" className="nav-link" onClick={closeMobileMenu}>Nhà nguyên căn</Link>
               <Link to="/listings?type=can-ho" className="nav-link" onClick={closeMobileMenu}>Căn hộ</Link>
+              <Link to="/reviews" className="nav-link" onClick={closeMobileMenu}>🎬 Review</Link>
             </nav>
 
             <div className="auth-section">

@@ -75,6 +75,28 @@ export const mediaAPI = {
   deleteMedia: (mediaId) => api.delete(`/media/media/${mediaId}`),
 };
 
+// Reviews API
+export const reviewsAPI = {
+  // Public routes
+  getAllReviews: (params) => api.get('/reviews', { params }),
+  getReviewsByRoom: (roomId, params) => api.get(`/reviews/room/${roomId}`, { params }),
+  getReviewById: (id) => api.get(`/reviews/${id}`),
+  
+  // Protected routes
+  createReview: (roomId, data) => api.post(`/reviews/room/${roomId}`, data),
+  updateReview: (id, data) => api.put(`/reviews/${id}`, data),
+  deleteReview: (id) => api.delete(`/reviews/${id}`),
+  
+  // Admin routes
+  adminGetReviews: (params) => api.get('/reviews/admin/all', { params }),
+  adminGetPendingReviews: (params) => api.get('/reviews/admin/pending', { params }),
+  adminGetStats: () => api.get('/reviews/admin/stats'),
+  adminApproveReview: (id) => api.patch(`/reviews/admin/${id}/approve`),
+  adminRejectReview: (id) => api.patch(`/reviews/admin/${id}/reject`),
+  adminToggleFeatured: (id) => api.patch(`/reviews/admin/${id}/featured`),
+  adminDeleteReview: (id) => api.delete(`/reviews/admin/${id}`),
+};
+
 // Admin API
 export const adminAPI = {
   // Dashboard
