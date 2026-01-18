@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { listingsAPI, mediaAPI } from '../services/api';
 import { HeroMediaSection, MediaGallery, VideoReviewFeed } from '../components/media';
+import { ReviewSection } from '../components/review';
 import './ListingDetail.css';
 
 const ListingDetail = () => {
@@ -176,7 +177,15 @@ const ListingDetail = () => {
             )}
           </div>
 
-          {/* Video Review Feed - TikTok Style */}
+          {/* Review Section - Real Reviews with Video + Photos */}
+          <ReviewSection 
+            roomId={id}
+            onReviewSubmitted={() => {
+              fetchVideoReviews();
+            }}
+          />
+
+          {/* Video Review Feed - TikTok Style (Legacy) */}
           {videoReviews.length > 0 && (
             <VideoReviewFeed
               reviews={videoReviews}

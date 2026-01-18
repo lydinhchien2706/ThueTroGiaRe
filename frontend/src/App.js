@@ -10,12 +10,14 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import CreateListing from './pages/CreateListing';
+import Reviews from './pages/Reviews';
 import { 
   AdminDashboard, 
   AdminUsers, 
   AdminListings, 
   AdminPending, 
-  AdminReports 
+  AdminReports,
+  AdminReviews
 } from './pages/admin';
 import './App.css';
 
@@ -33,6 +35,7 @@ function AppContent() {
         <Route path="/admin/listings" element={<AdminListings />} />
         <Route path="/admin/pending" element={<AdminPending />} />
         <Route path="/admin/reports" element={<AdminReports />} />
+        <Route path="/admin/reviews" element={<AdminReviews />} />
       </Routes>
     );
   }
@@ -50,6 +53,7 @@ function AppContent() {
             <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/create-listing" element={<CreateListing />} />
+            <Route path="/reviews" element={<Reviews />} />
           </Routes>
         </PageTransition>
       </main>

@@ -25,6 +25,7 @@ const AdminLayout = ({ children }) => {
     { path: '/admin/users', label: 'Quản lý User', icon: '👥' },
     { path: '/admin/listings', label: 'Quản lý Tin đăng', icon: '🏠' },
     { path: '/admin/pending', label: 'Chờ duyệt', icon: '⏳' },
+    { path: '/admin/reviews', label: 'Quản lý Review', icon: '📝' },
     { path: '/admin/reports', label: 'Báo cáo vi phạm', icon: '⚠️' },
   ];
 
