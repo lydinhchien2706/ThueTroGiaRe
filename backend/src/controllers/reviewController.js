@@ -1,9 +1,25 @@
 const { Op } = require('sequelize');
+const fs = require('fs');
+const path = require('path');
 const sequelize = require('../config/database');
 const Review = require('../models/Review');
 const ReviewMedia = require('../models/ReviewMedia');
 const Listing = require('../models/Listing');
 const User = require('../models/User');
+
+// Helper function to clean up uploaded files
+const cleanupUploadedFiles = (files) => {
+  if (!files || !Array.isArray(files)) return;
+  files.forEach(file => {
+    try {
+      if (file.path && fs.existsSync(file.path)) {
+        fs.unlinkSync(file.path);
+      }
+    } catch (err) {
+      console.error('Error cleaning up file:', file.path, err);
+    }
+  });
+};
 
 // Configuration constants
 const REVIEW_CONFIG = {
@@ -377,6 +393,135 @@ exports.createReview = async (req, res) => {
   } catch (error) {
     await transaction.rollback();
     console.error('Create review error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Lỗi server',
+      error: error.message
+    });
+  }
+};
+
+// Create a new review with file upload
+exports.createReviewWithUpload = async (req, res) => {
+  const transaction = await sequelize.transaction();
+  const files = req.files || [];
+  
+  try {
+    const { roomId } = req.params;
+    const { title, content, rating, type } = req.body;
+    const userId = req.user.id;
+
+    // Validate room exists
+    const room = await Listing.findByPk(roomId);
+    if (!room) {
+      await transaction.rollback();
+      cleanupUploadedFiles(files);
+      return res.status(404).json({
+        success: false,
+        message: 'Không tìm thấy phòng trọ'
+      });
+    }
+
+    // Validate rating
+    const ratingNum = parseInt(rating);
+    if (!ratingNum || ratingNum < 1 || ratingNum > 5) {
+      await transaction.rollback();
+      cleanupUploadedFiles(files);
+      return res.status(400).json({
+        success: false,
+        message: 'Đánh giá phải từ 1 đến 5 sao'
+      });
+    }
+
+    // Validate content
+    if (!content || !content.trim()) {
+      await transaction.rollback();
+      cleanupUploadedFiles(files);
+      return res.status(400).json({
+        success: false,
+        message: 'Vui lòng nhập nội dung đánh giá'
+      });
+    }
+
+    // Determine role based on user
+    let role = 'renter';
+    if (req.user.role === 'admin') {
+      role = 'admin';
+    } else if (room.user_id && room.user_id === userId) {
+      role = 'landlord';
+    }
+
+    // Determine type based on uploaded files
+    let reviewType = 'mixed';
+    if (files.length > 0) {
+      const hasVideo = files.some(f => f.mimetype.startsWith('video/'));
+      const hasImage = files.some(f => f.mimetype.startsWith('image/'));
+      if (hasVideo && !hasImage) reviewType = 'video';
+      else if (hasImage && !hasVideo) reviewType = 'image';
+    }
+
+    // Create review
+    const review = await Review.create({
+      room_id: roomId,
+      user_id: userId,
+      role,
+      type: type || reviewType,
+      title: title || null,
+      content,
+      rating: ratingNum,
+      status: role === 'admin' ? 'approved' : 'pending'
+    }, { transaction });
+
+    // Add uploaded media
+    if (files.length > 0) {
+      // Validate image count
+      const imageCount = files.filter(f => f.mimetype.startsWith('image/')).length;
+      if (imageCount > REVIEW_CONFIG.MAX_IMAGES_PER_REVIEW) {
+        await transaction.rollback();
+        cleanupUploadedFiles(files);
+        return res.status(400).json({
+          success: false,
+          message: `Tối đa ${REVIEW_CONFIG.MAX_IMAGES_PER_REVIEW} ảnh mỗi review`
+        });
+      }
+
+      const baseUrl = `${req.protocol}://${req.get('host')}`;
+      const mediaRecords = files.map((file, index) => {
+        const isVideo = file.mimetype.startsWith('video/');
+        return {
+          review_id: review.id,
+          media_type: isVideo ? 'video' : 'image',
+          url: `${baseUrl}/uploads/review-media/${file.filename}`,
+          thumbnail_url: isVideo ? null : `${baseUrl}/uploads/review-media/${file.filename}`,
+          duration: null,
+          display_order: index
+        };
+      });
+
+      await ReviewMedia.bulkCreate(mediaRecords, { transaction });
+    }
+
+    await transaction.commit();
+
+    // Fetch the created review with associations
+    const createdReview = await Review.findByPk(review.id, {
+      include: [
+        { model: User, as: 'user', attributes: ['id', 'name'] },
+        { model: ReviewMedia, as: 'media' }
+      ]
+    });
+
+    res.status(201).json({
+      success: true,
+      message: role === 'admin' 
+        ? 'Đăng review thành công' 
+        : 'Đăng review thành công, đang chờ duyệt',
+      data: { review: createdReview }
+    });
+  } catch (error) {
+    await transaction.rollback();
+    cleanupUploadedFiles(files);
+    console.error('Create review with upload error:', error);
     res.status(500).json({
       success: false,
       message: 'Lỗi server',

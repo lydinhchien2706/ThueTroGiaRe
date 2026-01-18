@@ -84,6 +84,11 @@ export const reviewsAPI = {
   
   // Protected routes
   createReview: (roomId, data) => api.post(`/reviews/room/${roomId}`, data),
+  createReviewWithUpload: (roomId, formData) => api.post(`/reviews/room/${roomId}/upload`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }),
   updateReview: (id, data) => api.put(`/reviews/${id}`, data),
   deleteReview: (id) => api.delete(`/reviews/${id}`),
   
