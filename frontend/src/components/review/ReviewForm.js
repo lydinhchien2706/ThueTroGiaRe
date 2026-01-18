@@ -180,7 +180,7 @@ const ReviewForm = ({ roomId, onSubmitted, onCancel }) => {
       // Reset form
       setFormData({ title: '', content: '', rating: 5 });
       setMedia([]);
-      uploadedFiles.forEach(f => URL.revokeObjectURL(f.preview));
+      uploadedFiles.forEach(f => f.preview && URL.revokeObjectURL(f.preview));
       setUploadedFiles([]);
       
       if (onSubmitted) onSubmitted();

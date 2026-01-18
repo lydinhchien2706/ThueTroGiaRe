@@ -1,9 +1,25 @@
 const { Op } = require('sequelize');
+const fs = require('fs');
+const path = require('path');
 const sequelize = require('../config/database');
 const Review = require('../models/Review');
 const ReviewMedia = require('../models/ReviewMedia');
 const Listing = require('../models/Listing');
 const User = require('../models/User');
+
+// Helper function to clean up uploaded files
+const cleanupUploadedFiles = (files) => {
+  if (!files || !Array.isArray(files)) return;
+  files.forEach(file => {
+    try {
+      if (file.path && fs.existsSync(file.path)) {
+        fs.unlinkSync(file.path);
+      }
+    } catch (err) {
+      console.error('Error cleaning up file:', file.path, err);
+    }
+  });
+};
 
 // Configuration constants
 const REVIEW_CONFIG = {
@@ -388,17 +404,18 @@ exports.createReview = async (req, res) => {
 // Create a new review with file upload
 exports.createReviewWithUpload = async (req, res) => {
   const transaction = await sequelize.transaction();
+  const files = req.files || [];
   
   try {
     const { roomId } = req.params;
     const { title, content, rating, type } = req.body;
     const userId = req.user.id;
-    const files = req.files || [];
 
     // Validate room exists
     const room = await Listing.findByPk(roomId);
     if (!room) {
       await transaction.rollback();
+      cleanupUploadedFiles(files);
       return res.status(404).json({
         success: false,
         message: 'Không tìm thấy phòng trọ'
@@ -409,6 +426,7 @@ exports.createReviewWithUpload = async (req, res) => {
     const ratingNum = parseInt(rating);
     if (!ratingNum || ratingNum < 1 || ratingNum > 5) {
       await transaction.rollback();
+      cleanupUploadedFiles(files);
       return res.status(400).json({
         success: false,
         message: 'Đánh giá phải từ 1 đến 5 sao'
@@ -418,6 +436,7 @@ exports.createReviewWithUpload = async (req, res) => {
     // Validate content
     if (!content || !content.trim()) {
       await transaction.rollback();
+      cleanupUploadedFiles(files);
       return res.status(400).json({
         success: false,
         message: 'Vui lòng nhập nội dung đánh giá'
@@ -459,6 +478,7 @@ exports.createReviewWithUpload = async (req, res) => {
       const imageCount = files.filter(f => f.mimetype.startsWith('image/')).length;
       if (imageCount > REVIEW_CONFIG.MAX_IMAGES_PER_REVIEW) {
         await transaction.rollback();
+        cleanupUploadedFiles(files);
         return res.status(400).json({
           success: false,
           message: `Tối đa ${REVIEW_CONFIG.MAX_IMAGES_PER_REVIEW} ảnh mỗi review`
@@ -500,6 +520,7 @@ exports.createReviewWithUpload = async (req, res) => {
     });
   } catch (error) {
     await transaction.rollback();
+    cleanupUploadedFiles(files);
     console.error('Create review with upload error:', error);
     res.status(500).json({
       success: false,
