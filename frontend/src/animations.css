@@ -820,7 +820,7 @@
    20. PAGE TRANSITIONS
    ===================================================== */
 
-/* Fade page enter */
+/* Legacy transition classes (kept for backward compatibility) */
 .page-enter {
   opacity: 0;
 }
@@ -837,6 +837,23 @@
 .page-exit-active {
   opacity: 0;
   transition: opacity var(--duration-base) var(--ease-out);
+}
+
+/* Ensure smooth transitions for main content area */
+main {
+  position: relative;
+  min-height: calc(100vh - 200px);
+}
+
+/* Optimize page content for smooth transitions */
+.home-page,
+.listings-page,
+.listing-detail-page,
+.auth-page,
+.dashboard-page,
+.create-listing-page {
+  will-change: auto;
+  transform: translateZ(0);
 }
 
 /* =====================================================

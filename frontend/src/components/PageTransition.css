@@ -1,0 +1,58 @@
+/* =====================================================
+   PAGE TRANSITION COMPONENT STYLES
+   Smooth, performant page transitions
+   ===================================================== */
+
+.page-transition {
+  /* Enable GPU acceleration for smoother animations */
+  will-change: opacity, transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Enter animation - fade in and slide up subtly */
+.page-transition--enter {
+  animation: pageEnter 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Exit animation - fade out quickly */
+.page-transition--exit {
+  animation: pageExit 0.15s cubic-bezier(0.64, 0, 0.78, 0) forwards;
+}
+
+@keyframes pageEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) translateZ(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) translateZ(0);
+  }
+}
+
+@keyframes pageExit {
+  0% {
+    opacity: 1;
+    transform: translateY(0) translateZ(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px) translateZ(0);
+  }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .page-transition--enter,
+  .page-transition--exit {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  
+  .page-transition {
+    will-change: auto;
+  }
+}
