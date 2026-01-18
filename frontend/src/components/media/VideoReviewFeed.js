@@ -110,7 +110,7 @@ const VideoReviewFeed = ({ reviews = [], onLike, onReport, currentUserId }) => {
   return (
     <div className="video-review-section">
       <div className="section-header">
-        <h3 className="section-title">🎬 Video Review từ người thuê</h3>
+        <h3 className="section-title">🎬 Video Review từ người thuê & chủ nhà</h3>
         <span className="review-count">{reviews.length} video</span>
       </div>
 

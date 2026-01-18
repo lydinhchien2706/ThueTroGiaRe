@@ -129,8 +129,8 @@ const Reviews = () => {
       {/* Header */}
       <div className="reviews-header">
         <div className="container">
-          <h1>🎬 Review thực tế từ người thuê</h1>
-          <p>Xem những đánh giá chân thực từ cộng đồng người thuê trọ</p>
+          <h1>🎬 Review thực tế từ người thuê & chủ nhà</h1>
+          <p>Xem những đánh giá chân thực với video và ảnh từ cộng đồng</p>
         </div>
       </div>
 
